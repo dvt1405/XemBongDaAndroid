@@ -61,13 +61,13 @@ abstract class BaseAdapter<T, VB : ViewDataBinding> : RecyclerView.Adapter<BaseV
         val viewBinding: VB = DataBindingUtil.bind(view)!!
         return object : BaseViewHolder<T, VB>(viewBinding) {
             override fun onBind(item: T, position: Int) {
-                bindItem(item, viewBinding)
+                bindItem(item, viewBinding, adapterPosition)
             }
 
         }
     }
 
-    abstract fun bindItem(item: T, binding: VB)
+    abstract fun bindItem(item: T, binding: VB, position: Int)
 
     open fun onRefresh(items: List<T>, notifyDataSetChange: Boolean = true) {
         _listItem.clear()
