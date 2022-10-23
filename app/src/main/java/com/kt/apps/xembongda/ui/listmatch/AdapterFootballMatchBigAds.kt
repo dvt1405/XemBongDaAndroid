@@ -2,8 +2,12 @@ package com.kt.apps.xembongda.ui.listmatch
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.VideoController
 import com.google.android.gms.ads.VideoOptions
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
@@ -118,6 +122,9 @@ class AdapterFootballMatchBigAds :
         mutableListOf<NativeAd>()
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+    }
 
     override fun bindAds(adsBinding: ItemBigNativeAdsBinding, position: Int) {
         val adsPosition = if (position == _firstAdPosition) {
@@ -132,6 +139,27 @@ class AdapterFootballMatchBigAds :
                 } ?: throw Exception()
             } else {
                 listAds[adsPosition]
+            }
+            nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
+                override fun onVideoEnd() {
+                    super.onVideoEnd()
+                }
+
+                override fun onVideoMute(p0: Boolean) {
+                    super.onVideoMute(p0)
+                }
+
+                override fun onVideoPlay() {
+                    super.onVideoPlay()
+                }
+
+                override fun onVideoPause() {
+                    super.onVideoPause()
+                }
+
+                override fun onVideoStart() {
+                    super.onVideoStart()
+                }
             }
             adsBinding.nativeAdsView.setNativeAd(nativeAd)
 
