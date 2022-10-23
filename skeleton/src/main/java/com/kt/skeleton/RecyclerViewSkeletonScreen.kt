@@ -72,6 +72,7 @@ class RecyclerViewSkeletonScreen(
             }
         }
         recyclerView.adapter = adapterSkeleton
+        recyclerView.layoutManager = layoutManager
         if (runLayoutAnimation) {
             recyclerView.runLayoutAnimation()
         }
