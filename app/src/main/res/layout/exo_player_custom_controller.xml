@@ -213,7 +213,7 @@
             android:visibility="gone" />
 
         <ImageButton
-            android:id="@+id/exo_previous_custom"
+            android:id="@id/exo_prev"
             style="@style/ExoStyledControls.Button.Center.Previous"
             android:layout_width="48dp"
             android:layout_height="48dp"
@@ -239,7 +239,7 @@
         <!--        <include layout="@layout/exo_styled_player_control_ffwd_button" />-->
 
         <ImageButton
-            android:id="@+id/exo_next_custom"
+            android:id="@id/exo_next"
             style="@style/ExoStyledControls.Button.Center.Next"
             android:layout_width="48dp"
             android:layout_height="48dp"

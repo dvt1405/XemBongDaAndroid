@@ -22,7 +22,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/common_padding"
             android:alpha="1"
-            android:background="@color/white"
+            android:background="@color/backgroundColor"
             android:elevation="18dp"
             android:transitionName="fade_in"
             android:translationZ="10dp"

@@ -1,9 +1,12 @@
 package com.kt.apps.xembongda.player
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -18,6 +21,7 @@ import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
 import com.kt.apps.xembongda.utils.visible
@@ -33,7 +37,7 @@ import javax.net.ssl.X509TrustManager
 
 class ExoPlayerManager @Inject constructor(
     private val context: Context
-) {
+) : Application.ActivityLifecycleCallbacks {
     companion object {
         private val TAG = "TAG"
         private const val FULL_SCREEN_FLAG = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -44,11 +48,16 @@ class ExoPlayerManager @Inject constructor(
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
     }
 
+    private var firstStreamSuccess: Boolean = false
     private val exoFullScreenDrawableEnter: Drawable by lazy {
         ContextCompat.getDrawable(
             context,
             R.drawable.ic_round_fullscreen_24
         )!!
+    }
+
+    init {
+        App.get().registerActivityLifecycleCallbacks(this)
     }
 
     private val exoFullScreenDrawableExit: Drawable by lazy {
@@ -84,15 +93,17 @@ class ExoPlayerManager @Inject constructor(
         minHeight: Int = LayoutParams.WRAP_CONTENT,
         isMinimize: Boolean = false
     ) {
-        val layoutParams = playerView.layoutParams
-        layoutParams?.height =
-            if (minHeight == LayoutParams.WRAP_CONTENT || minHeight == LayoutParams.MATCH_PARENT) {
-                minHeight
-            } else {
-                lastMinHeightSetupForController = (scaleDensity * minHeight).toInt()
-                lastMinHeightSetupForController!!
-            }
-        playerView.layoutParams = layoutParams
+        if (!firstStreamSuccess) {
+            val layoutParams = playerView.layoutParams
+            layoutParams?.height =
+                if (minHeight == LayoutParams.WRAP_CONTENT || minHeight == LayoutParams.MATCH_PARENT) {
+                    minHeight
+                } else {
+                    lastMinHeightSetupForController = (scaleDensity * minHeight).toInt()
+                    lastMinHeightSetupForController!!
+                }
+            playerView.layoutParams = layoutParams
+        }
         setClickListenerForControllerView(activity, playerView, isMinimize)
     }
 
@@ -142,15 +153,6 @@ class ExoPlayerManager @Inject constructor(
                     ExoPlayer.STATE_IDLE -> {
                     }
                     ExoPlayer.STATE_BUFFERING -> {
-//                        Log.e(
-//                            TAG,
-//                            "onPlaybackStateChanged: ${
-//                                playerView?.layoutParams?.height?.div(
-//                                    scaleDensity
-//                                ) ?: -1
-//                            }"
-//                        )
-
                     }
                     ExoPlayer.STATE_READY -> {
                         val layoutParams = playerView?.layoutParams
@@ -160,6 +162,7 @@ class ExoPlayerManager @Inject constructor(
                             LayoutParams.WRAP_CONTENT
                         }
                         playerView?.layoutParams = layoutParams
+                        firstStreamSuccess = true
                     }
                     ExoPlayer.STATE_ENDED -> {
                     }
@@ -170,9 +173,12 @@ class ExoPlayerManager @Inject constructor(
 
             override fun onPlayerError(error: PlaybackException) {
                 super.onPlayerError(error)
-                val layoutParams = _currentTargetPlayerView?.layoutParams
-                layoutParams?.height = lastMinHeightSetupForController ?: LayoutParams.WRAP_CONTENT
-                _currentTargetPlayerView?.layoutParams = layoutParams
+                if (!firstStreamSuccess) {
+                    val layoutParams = _currentTargetPlayerView?.layoutParams
+                    layoutParams?.height =
+                        lastMinHeightSetupForController ?: LayoutParams.WRAP_CONTENT
+                    _currentTargetPlayerView?.layoutParams = layoutParams
+                }
             }
 
         }
@@ -203,10 +209,7 @@ class ExoPlayerManager @Inject constructor(
     }
 
     fun exitFullScreen(activity: AppCompatActivity) {
-        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        Handler(Looper.getMainLooper()).postDelayed({
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }, 500)
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
         oldScreenFlag?.let {
             activity.window.setFlags(it, it)
@@ -214,6 +217,16 @@ class ExoPlayerManager @Inject constructor(
             oldScreenFlag = null
         } ?: activity.window.clearFlags(FULL_SCREEN_FLAG)
         updateFullScreenState(false)
+    }
+
+
+    fun showMinimizeControl() {
+        if (!exoPlayer.isLoading && exoPlayer.playerError == null) {
+            val layoutParams = playerView?.layoutParams
+            layoutParams?.height = LayoutParams.WRAP_CONTENT
+            playerView?.layoutParams = layoutParams
+        }
+
     }
 
     private fun updateFullScreenState(isFullScreen: Boolean) {
@@ -327,6 +340,34 @@ class ExoPlayerManager @Inject constructor(
         if (!isUrl) return ""
         val baseUrl = this.toHttpUrl().host
         return if (isHttps) "https://${baseUrl.trim()}" else "http://${baseUrl.trim()}"
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        playerView?.onResume()
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+        playerView?.onPause()
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        TODO("Not yet implemented")
     }
 
 }
