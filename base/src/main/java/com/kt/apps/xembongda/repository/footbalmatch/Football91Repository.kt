@@ -121,19 +121,16 @@ class Football91Repository @Inject constructor(
 
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
         return Observable.create { emitter ->
-            var lastMatchDetail: FootballMatchWithStreamLink? = null
+            val lastMatchDetail: FootballMatchWithStreamLink?
             val listM3u8 = mutableListOf<LinkStreamWithReferer>()
             val response = jsoupParse(match.detailPage, cookie, Pair("referer", match.detailPage))
             cookie.putAll(response.cookie)
-            Log.e("TAG", "COOKIE ${cookie.toString()}")
             val dom = response.body
             val iframes = dom.getElementById("player")!!.getElementsByTag("iframe")
             for (frame in iframes) {
                 val src = frame.attributes().get("src")
-                parseM3u8LinkFromFrame(src, match)?.let {
-                    listM3u8.addAll(it.linkStreams)
-                    lastMatchDetail = FootballMatchWithStreamLink(match, listM3u8)
-                    emitter.onNext(lastMatchDetail!!)
+                parseM3u8LinkFromFrame(src)?.let {
+                    listM3u8.addAll(it)
                 }
 
             }
@@ -156,18 +153,16 @@ class Football91Repository @Inject constructor(
                             .get("src")
 
 
-                        parseM3u8LinkFromFrame(detailDom, match)?.let {
-                            listM3u8.addAll(it.linkStreams)
-                            lastMatchDetail = FootballMatchWithStreamLink(match, listM3u8)
-                            emitter.onNext(lastMatchDetail!!)
+                        parseM3u8LinkFromFrame(detailDom)?.let {
+                            listM3u8.addAll(it)
                         }
                     } catch (_: Exception) {
                     }
                 }
             }
-            lastMatchDetail?.let {
-                saveFootballMatch(it.match, Gson().toJson(it.linkStreams))
-            }
+            lastMatchDetail = FootballMatchWithStreamLink(match, listM3u8)
+            saveFootballMatch(lastMatchDetail.match, Gson().toJson(lastMatchDetail.linkStreams))
+            emitter.onNext(lastMatchDetail)
             emitter.onComplete()
         }.doOnError {
             Log.e("TAG", it.message, it)
@@ -178,11 +173,7 @@ class Football91Repository @Inject constructor(
 
     }
 
-    private fun parseM3u8LinkFromFrame(
-        src: String,
-        match: FootballMatch
-    ): FootballMatchWithStreamLink? {
-        var lastMatchDetail: FootballMatchWithStreamLink? = null
+    private fun parseM3u8LinkFromFrame(src: String): List<LinkStreamWithReferer>? {
         val listUrl = mutableListOf<String>()
         val response = jsoupParse(src, cookie, Pair("referer", config.url))
         cookie.putAll(response.cookie)
@@ -202,9 +193,6 @@ class Football91Repository @Inject constructor(
             }
         }
         return if (listUrl.isEmpty()) null else
-            FootballMatchWithStreamLink(
-                match,
-                listUrl.map { LinkStreamWithReferer(it, src) }
-            )
+            listUrl.map { LinkStreamWithReferer(it, src) }
     }
 }
