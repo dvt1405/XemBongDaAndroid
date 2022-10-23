@@ -2,14 +2,16 @@ package com.kt.apps.xembongda.player
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
+import android.content.pm.ActivityInfo
+import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
+import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
@@ -18,6 +20,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
+import com.kt.apps.xembongda.utils.visible
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.SecureRandom
 import java.security.cert.CertificateException
@@ -32,7 +35,24 @@ class ExoPlayerManager @Inject constructor(
     private val context: Context
 ) {
     companion object {
-        private val TAG = this::class.java.simpleName
+        private val TAG = "TAG"
+        private const val FULL_SCREEN_FLAG = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+    }
+
+    private val exoFullScreenDrawableEnter: Drawable by lazy {
+        ContextCompat.getDrawable(
+            context,
+            R.drawable.ic_round_fullscreen_24
+        )!!
+    }
+
+    private val exoFullScreenDrawableExit: Drawable by lazy {
+        ContextCompat.getDrawable(context, R.drawable.ic_round_fullscreen_exit_24)!!
     }
 
     var playerView: StyledPlayerView? = null
@@ -40,41 +60,70 @@ class ExoPlayerManager @Inject constructor(
             field = value
             field?.player = exoPlayer
         }
+    private val scaleDensity by lazy {
+        context.resources.displayMetrics.scaledDensity
+    }
+    private var lastMinHeightSetupForController: Int? = null
 
     private var _currentTargetPlayerView: StyledPlayerView? = null
 
-    fun switchTargetView(targetPlayerView: StyledPlayerView) {
+    var onCloseExoPlayer: (() -> Unit)? = null
+
+    fun switchTargetView(targetPlayerView: StyledPlayerView, isFullScreen: Boolean = false) {
         StyledPlayerView.switchTargetView(exoPlayer, playerView, targetPlayerView)
         playerView = targetPlayerView
         _currentTargetPlayerView = targetPlayerView
+        if (isFullScreen) {
+            updateFullScreenState(isFullScreen)
+        }
     }
 
     fun setupController(
+        activity: AppCompatActivity,
         playerView: StyledPlayerView,
-        minHeight: Int = LayoutParams.WRAP_CONTENT
+        minHeight: Int = LayoutParams.WRAP_CONTENT,
+        isMinimize: Boolean = false
     ) {
         val layoutParams = playerView.layoutParams
-        layoutParams?.height = if (minHeight == LayoutParams.WRAP_CONTENT) LayoutParams.WRAP_CONTENT
-        else (context.resources.displayMetrics.scaledDensity * minHeight).toInt()
+        layoutParams?.height =
+            if (minHeight == LayoutParams.WRAP_CONTENT || minHeight == LayoutParams.MATCH_PARENT) {
+                minHeight
+            } else {
+                lastMinHeightSetupForController = (scaleDensity * minHeight).toInt()
+                lastMinHeightSetupForController!!
+            }
         playerView.layoutParams = layoutParams
+        setClickListenerForControllerView(activity, playerView, isMinimize)
+    }
+
+    private fun setClickListenerForControllerView(
+        activity: AppCompatActivity,
+        playerView: StyledPlayerView,
+        isFullScreen: Boolean,
+        isMinimize: Boolean = false
+    ) {
+        val playerControllerView: StyledPlayerControlView =
+            playerView.findViewById(com.google.android.exoplayer2.ui.R.id.exo_controller)
+        playerControllerView.isAnimationEnabled = true
+        playerControllerView.setShowNextButton(!isMinimize)
+        playerControllerView.setShowPreviousButton(!isMinimize)
+        playerControllerView.setProgressUpdateListener { _, _ ->
+
+        }
+        playerView.setFullscreenButtonClickListener {
+            if (this.isFullScreen) {
+                exitFullScreen(activity)
+            } else {
+                enterFullScreen(activity)
+            }
+        }
         playerView.findViewById<View>(R.id.exc_btn_close_player)?.setOnClickListener {
             onCloseExoPlayer?.invoke()
         }
-        playerView.setFullscreenButtonClickListener {}
-    }
-
-    fun setupController(playerView: StyledPlayerView, isMinimize: Boolean) {
-        setClickListenerForControllerView(playerView.findViewById(com.google.android.exoplayer2.ui.R.id.exo_controller))
-        if (isMinimize) {
-
+        if (isFullScreen != this.isFullScreen) {
+            updateFullScreenState(isFullScreen)
         }
     }
-
-    private fun setClickListenerForControllerView(playerControllerView: StyledPlayerControlView) {
-
-    }
-
-    var onCloseExoPlayer: (() -> Unit)? = null
 
     private val audioAttr by lazy {
         AudioAttributes.Builder()
@@ -93,18 +142,37 @@ class ExoPlayerManager @Inject constructor(
                     ExoPlayer.STATE_IDLE -> {
                     }
                     ExoPlayer.STATE_BUFFERING -> {
+//                        Log.e(
+//                            TAG,
+//                            "onPlaybackStateChanged: ${
+//                                playerView?.layoutParams?.height?.div(
+//                                    scaleDensity
+//                                ) ?: -1
+//                            }"
+//                        )
 
                     }
                     ExoPlayer.STATE_READY -> {
-                        val layoutParams = _currentTargetPlayerView?.layoutParams
-                        layoutParams?.height = LayoutParams.WRAP_CONTENT
-                        _currentTargetPlayerView?.layoutParams = layoutParams
+                        val layoutParams = playerView?.layoutParams
+                        layoutParams?.height = if (isFullScreen) {
+                            LayoutParams.MATCH_PARENT
+                        } else {
+                            LayoutParams.WRAP_CONTENT
+                        }
+                        playerView?.layoutParams = layoutParams
                     }
                     ExoPlayer.STATE_ENDED -> {
                     }
                     else -> {
                     }
                 }
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                val layoutParams = _currentTargetPlayerView?.layoutParams
+                layoutParams?.height = lastMinHeightSetupForController ?: LayoutParams.WRAP_CONTENT
+                _currentTargetPlayerView?.layoutParams = layoutParams
             }
 
         }
@@ -117,6 +185,48 @@ class ExoPlayerManager @Inject constructor(
             .setAudioAttributes(audioAttr, true)
             .setHandleAudioBecomingNoisy(true)
             .build()
+    }
+    var isFullScreen: Boolean = false
+    var oldScreenFlag: Int? = null
+
+    fun enterFullScreen(activity: AppCompatActivity) {
+        if (!isFullScreen) {
+            oldScreenFlag = activity.window.attributes.flags
+            activity.window.setFlags(
+                FULL_SCREEN_FLAG,
+                FULL_SCREEN_FLAG
+            )
+            activity.window.decorView.systemUiVisibility = FULL_SCREEN_FLAG
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            updateFullScreenState(true)
+        }
+    }
+
+    fun exitFullScreen(activity: AppCompatActivity) {
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        Handler(Looper.getMainLooper()).postDelayed({
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }, 500)
+
+        oldScreenFlag?.let {
+            activity.window.setFlags(it, it)
+            activity.window.decorView.systemUiVisibility = it
+            oldScreenFlag = null
+        } ?: activity.window.clearFlags(FULL_SCREEN_FLAG)
+        updateFullScreenState(false)
+    }
+
+    private fun updateFullScreenState(isFullScreen: Boolean) {
+        this.isFullScreen = isFullScreen
+        val fullScreenButton =
+            playerView?.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_fullscreen)
+
+        if (isFullScreen) {
+            fullScreenButton?.visible()
+            fullScreenButton?.setImageDrawable(exoFullScreenDrawableExit)
+        } else {
+            fullScreenButton?.setImageDrawable(exoFullScreenDrawableEnter)
+        }
     }
 
     private fun trustEveryone() {

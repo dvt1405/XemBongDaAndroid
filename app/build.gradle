@@ -5,13 +5,13 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'applovin-quality-service'
+//    id 'applovin-quality-service'
 
 }
 
-applovin {
-    apiKey "avJkJkTUhqmoZGJTcdqgylRVHN9sbc3ZSUbub3UL1fXR3fXOyqupneiTBSvfi8FT0iI060T6danq4i-z5ZaZJp"
-}
+//applovin {
+//    apiKey "avJkJkTUhqmoZGJTcdqgylRVHN9sbc3ZSUbub3UL1fXR3fXOyqupneiTBSvfi8FT0iI060T6danq4i-z5ZaZJp"
+//}
 
 android {
     namespace 'com.kt.apps.xembongda'

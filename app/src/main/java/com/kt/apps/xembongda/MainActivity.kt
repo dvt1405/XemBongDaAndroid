@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.core.content.ContextCompat
@@ -111,6 +112,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.btnSwitchPlayerTest.setOnClickListener {
             startActivity(Intent(this, PlayerActivity::class.java))
         }
+        binding.landScapeLayout.setOnClickListener {
+
+        }
     }
 
     @SuppressLint("SwitchIntDef")
@@ -118,46 +122,68 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onConfigurationChanged(newConfig)
         when (newConfig.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
-                Log.e("TAG", "ORIENTATION_LANDSCAPE")
-                binding.landScapeExoPlayer.visible()
-                exoPlayerManager.switchTargetView(binding.landScapeExoPlayer)
-                currentScene?.sceneRoot?.gone()
-
-                binding.landScapeExoPlayer.animate()
-                    .alpha(1f)
-                    .apply {
-                        this.duration = 200
-                    }
-                    .setUpdateListener {
-                        binding.landScapeExoPlayer.alpha = it.animatedFraction
-                    }
-                    .setInterpolator(AccelerateInterpolator())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-                            exoPlayerManager.switchTargetView(binding.landScapeExoPlayer)
-                        }
-                    })
-                    .start()
+                if (currentScene != null && (currentScene == scene2 || currentScene == scene3)
+                    && binding.landScapeExoPlayer.visibility == View.GONE
+                ) {
+                    enterFullScreenLandscape()
+                }
             }
             Configuration.ORIENTATION_PORTRAIT -> {
-                binding.landScapeExoPlayer.animate()
-                    .alpha(0f)
-                    .apply {
-                        this.duration = 200
-                    }
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-                            currentScene?.sceneRoot?.visible()
-                            binding.landScapeExoPlayer.gone()
-                            currentScene?.sceneRoot?.findViewById<StyledPlayerView>(R.id.exo_player)
-                                ?.let { exoPlayerManager.switchTargetView(it) }
-                        }
-                    })
-                    .start()
+                if (binding.landScapeExoPlayer.visibility == View.VISIBLE) {
+                    exitFullScreen()
+                }
             }
         }
+    }
+
+    private fun exitFullScreen() {
+        binding.landScapeExoPlayer.animate()
+            .alpha(0f)
+            .apply {
+                this.duration = 200
+            }
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    currentScene?.sceneRoot?.findViewById<StyledPlayerView>(R.id.exo_player)
+                        ?.let { exoPlayerManager.switchTargetView(it) }
+                    binding.container.visible()
+                    binding.landScapeExoPlayer.gone()
+                    binding.landScapeLayout.gone()
+                }
+            })
+            .start()
+    }
+
+    private fun enterFullScreenLandscape() {
+        binding.landScapeLayout.visible()
+        binding.landScapeExoPlayer.visible()
+        exoPlayerManager.setupController(
+            this@MainActivity,
+            binding.landScapeExoPlayer,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            false
+        )
+
+        binding.landScapeExoPlayer.animate()
+            .alpha(1f)
+            .apply {
+                this.duration = 200
+            }
+            .setUpdateListener {
+                binding.landScapeExoPlayer.alpha = it.animatedFraction
+            }
+            .setInterpolator(AccelerateInterpolator())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    if (exoPlayerManager.playerView != binding.landScapeExoPlayer) {
+                        exoPlayerManager.switchTargetView(binding.landScapeExoPlayer, true)
+                        binding.container.gone()
+                    }
+                }
+            })
+            .start()
     }
 
     private fun handelGetMatchDetail(): (data: DataState<FootballMatchWithStreamLink>) -> Unit = {
@@ -168,8 +194,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             is DataState.Success -> {
                 if (it.data.linkStreams.isNotEmpty()) {
                     exoPlayerManager.playVideo(it.data.linkStreams)
-                } else {
-
                 }
             }
             is DataState.Error -> {
@@ -182,6 +206,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onBackPressed() {
+        if (exoPlayerManager.isFullScreen) {
+            exoPlayerManager.exitFullScreen(this)
+            return
+        }
         when (currentScene) {
             scene2 -> {
                 supportFragmentManager.apply {
@@ -219,28 +247,31 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         if (scene == scene2) {
             exoPlayerManager.setupController(
+                this,
                 playerView,
-                240
+                240,
+                false
             )
         } else if (scene == scene3) {
             exoPlayerManager.setupController(
+                this,
                 playerView,
-                120
+                120,
+                true
             )
         }
 
         transition.addListener(object : TransitionListenerAdapter() {
             override fun onTransitionStart(transition: Transition) {
                 super.onTransitionStart(transition)
-                Log.e("TAG", "start")
 
             }
 
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
-                if (scene == scene3) {
-                    exoPlayerManager.setupController(playerView)
-                }
+//                if (scene == scene3) {
+//                    exoPlayerManager.setupController(playerView, isMinimize = true)
+//                }
                 transition.removeListener(this)
             }
         })
