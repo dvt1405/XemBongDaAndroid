@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:background="@color/backgroundColor"
+        android:layout_height="match_parent"
+        android:theme="@style/Theme.AppCompat">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/dashboardViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btnFootballLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/item_gray_selected"
+            app:backgroundTint="@color/item_gray_light"
+            app:layout_anchor="@id/bottomAppbar"
+            app:layout_anchorGravity="center"
+            app:srcCompat="@drawable/ic_round_live_tv_24" />
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppbar"
+            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="@color/backgroundColor"
+            app:contentInsetStart="@dimen/padding_0dp"
+            app:hideOnScroll="true">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white_transparent"
+                android:outlineAmbientShadowColor="@color/white_transparent"
+                android:outlineSpotShadowColor="@color/white_transparent"
+                app:backgroundTint="@color/white_transparent"
+                app:itemIconTint="@color/white"
+                app:itemTextColor="@color/white"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/menu_bottom_navigation" />
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

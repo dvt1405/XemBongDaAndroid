@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--    <item-->
+    <!--        android:id="@+id/home"-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:icon="@drawable/ic_round_home_24"-->
+    <!--        android:title="Trang chủ" />-->
+    <!--    <item-->
+    <!--        android:id="@+id/euro"-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:icon="@drawable/ic_round_sports_basketball_24"-->
+    <!--        android:title="@string/item_menu_euro_title" />-->
+    <!--    <item-->
+    <!--        android:id="@+id/copa"-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:icon="@drawable/ic_round_sports_baseball_24"-->
+    <!--        android:title="@string/item_menu_copa_title" />-->
+
+    <item
+        android:id="@+id/liveScore"
+        android:icon="@drawable/ic_round_wifi_protected_setup_24"
+        android:title="@string/item_menu_livescore_title"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/middle"
+        android:enabled="false"
+        android:icon="@null"
+        android:title="" />
+
+    <item
+        android:id="@+id/highlight"
+        android:icon="@drawable/ic_round_tv_24"
+        android:title="@string/item_menu_highlight_title"
+        app:showAsAction="ifRoom" />
+    <!--    <item-->
+    <!--        android:id="@+id/matchHistory"-->
+    <!--        android:icon="@drawable/ic_round_person_24"-->
+    <!--        app:showAsAction="ifRoom"-->
+    <!--        android:title="Profile" />-->
+
+</menu>

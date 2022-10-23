@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>91phut</key>
+        <value>https://91p.net/</value>
+    </entry>
+
+    <entry>
+        <key>mitom</key>
+        <value>https://mitom.90phut6.live/</value>
+    </entry>
+
+<!--    <entry>-->
+<!--        <key>extra:regex_91phut</key>-->
+<!--        <value>(?<=urlStream\s=\s").*?(?=")</value>-->
+<!--    </entry>-->
+    <entry>
+        <key>welcome_message</key>
+        <value>Welcome to my awesome app!</value>
+    </entry>
+</defaultsMap>

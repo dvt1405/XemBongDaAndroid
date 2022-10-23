@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "384093714532",
+    "project_id": "xembongda-a6695",
+    "storage_bucket": "xembongda-a6695.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384093714532:android:54a47b576ee0f0d9e2c771",
+        "android_client_info": {
+          "package_name": "com.kt.apps.xembongda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384093714532-rovk9ijjm9t87m29h1hja88c13raif0k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtsWY9nVsNPLeQCLntcxNyHvbKcymRh_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384093714532-rovk9ijjm9t87m29h1hja88c13raif0k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

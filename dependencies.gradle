@@ -1,0 +1,74 @@
+ext {
+    appDependencies = [
+            coreKt            : 'androidx.core:core-ktx:1.7.0',
+            appCompat         : 'androidx.appcompat:appcompat:1.5.0',
+            material          : 'com.google.android.material:material:1.6.1',
+            constrainlayout   : 'androidx.constraintlayout:constraintlayout:2.1.4',
+            dynamicAnimation  : 'androidx.dynamicanimation:dynamicanimation:1.0.0',
+            swipeRefreshLayout: "androidx.swiperefreshlayout:swiperefreshlayout:+"
+    ]
+    rxJavaDependencies = [
+            rxjava   : 'io.reactivex.rxjava3:rxjava:3.0.13',
+            rxandroid: 'io.reactivex.rxjava3:rxandroid:3.0.0',
+    ]
+
+    daggerDependencies = [
+            daggerAndroid       : "com.google.dagger:dagger-android:2.44",
+            daggerAndroidSupport: "com.google.dagger:dagger-android-support:2.44",
+    ]
+    complier = [
+            kapDaggerCompiler        : "com.google.dagger:dagger-compiler:2.44",
+            kapDaggerAndroidProcessor: "com.google.dagger:dagger-android-processor:2.44",
+            glide                    : "com.github.bumptech.glide:compiler:4.14.2"
+
+    ]
+
+    retrofitDependencies = [
+            retrofit             : "com.squareup.retrofit2:retrofit:2.9.0",
+            retrofitRxJavaAdapter: "com.squareup.retrofit2:adapter-rxjava3:2.9.0",
+            retrofitGsonConverter: "com.squareup.retrofit2:converter-gson:2.9.0",
+    ]
+
+    okhttpDependencies = [
+            logging: "com.squareup.okhttp3:logging-interceptor:+",
+            client : "com.squareup.okhttp3:okhttp:+"
+    ]
+
+    exoPlayerDependencies = [
+            core: 'com.google.android.exoplayer:exoplayer-core:2.18.1',
+            dash: 'com.google.android.exoplayer:exoplayer-dash:2.18.1',
+            ui  : 'com.google.android.exoplayer:exoplayer-ui:2.18.1',
+            hls : 'com.google.android.exoplayer:exoplayer-hls:2.18.1',
+            ima : 'com.google.android.exoplayer:extension-ima:2.18.1',
+    ]
+
+    firebaseDependencies = [
+            firebaseAuth: "com.google.firebase:firebase-auth-ktx",
+            analytics   : 'com.google.firebase:firebase-analytics-ktx',
+            firestore   : 'com.google.firebase:firebase-firestore-ktx',
+            database    : 'com.google.firebase:firebase-database-ktx',
+            dynamicLinks: 'com.google.firebase:firebase-dynamic-links-ktx',
+            crashlytics : 'com.google.firebase:firebase-crashlytics-ktx',
+            remoteConfig: 'com.google.firebase:firebase-config-ktx'
+    ]
+
+    externalDependencies = [
+            lotieAnimation: "com.airbnb.android:lottie:5.2.0",
+            jsoup         : "org.jsoup:jsoup:1.15.3",
+            gson          : "com.google.code.gson:gson:2.9.1",
+            glide         : "com.github.bumptech.glide:glide:4.14.2",
+    ]
+
+    googlePlayServices = [
+            auth: 'com.google.android.play:core-ktx:1.8.1'
+
+    ]
+
+    exoPlayerDependencies = [
+            core: 'com.google.android.exoplayer:exoplayer-core:2.18.1',
+            dash: 'com.google.android.exoplayer:exoplayer-dash:2.18.1',
+            ui  : 'com.google.android.exoplayer:exoplayer-ui:2.18.1',
+            hls : 'com.google.android.exoplayer:exoplayer-hls:2.18.1',
+            ima : 'com.google.android.exoplayer:extension-ima:2.18.1',
+    ]
+}

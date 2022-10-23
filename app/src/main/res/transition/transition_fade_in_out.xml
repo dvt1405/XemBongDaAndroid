@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
+    android:transitionOrdering="together">
+
+    <fade
+        android:duration="500"
+        android:fadingMode="fade_in"
+        android:interpolator="@android:interpolator/fast_out_slow_in">
+
+    </fade>
+    <changeBounds
+        android:duration="500"
+        android:interpolator="@android:interpolator/fast_out_slow_in">
+        <targets
+            android:targetId="@+id/bottom"
+            android:targetName="change_bound" />
+
+    </changeBounds>
+
+    <slide
+        android:duration="500"
+        android:interpolator="@android:interpolator/fast_out_slow_in"
+        android:startDelay="200">
+        <targets>
+            <target android:targetId="@+id/exo_player" />
+        </targets>
+    </slide>
+
+    <slide
+        android:duration="500"
+        android:interpolator="@android:interpolator/fast_out_slow_in">
+        <targets>
+            <target android:targetId="@+id/bottom" />
+        </targets>
+    </slide>
+
+</transitionSet>

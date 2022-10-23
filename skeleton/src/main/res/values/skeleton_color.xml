@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="skeleton_elements">#4A4949</color> <!--    middle skeleton-->
+    <color name="skeleton_elements_transparent">#00ECECEC</color>
+    <color name="skeleton_elements_100">#212121</color>  <!--    light skeleton-->
+
+    <color name="white_transparent">#00FFFFFF</color>
+    <color name="icon_color_grey">#838287</color>
+    <color name="search_layout">#EEEEF0</color>
+    <color name="parentBackground">#4A4949</color>
+
+    <color name="skeleton_elements_light">#4A4949</color>
+    <color name="skeleton_elements_light_50">#90212121</color>
+    <color name="skeleton_elements_dark">#212121</color>
+    <color name="skeleton_elements_dark_90">#90212121</color>
+
+
+    <color name="skeleton_elements_inside">#90DADCDB</color> <!--    dark skeleton-->
+    <color name="skeleton_elements_small_background">#EBEDEC</color>
+
+    <color name="skeleton_elements_big_background">#DADCDB</color>
+    <color name="skeleton_elements_list_dark">#EBEDEC</color>
+
+    <color name="skeleton_elements_base">#90ECECEC</color>
+    <color name="skeleton_elements_transparent_base">#00ECECEC</color>
+    <color name="skeleton_elements_100_base">#ECECEC</color>
+
+
+    <color name="skeleton_elements_light_base">#F3F3F3</color>
+    <color name="skeleton_elements_light_50_base">#90F3F3F3</color>
+    <color name="skeleton_elements_dark_base">#C9CCD1</color>
+    <color name="skeleton_elements_dark_90_base">#90C9CCD1</color>
+</resources>

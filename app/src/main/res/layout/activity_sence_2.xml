@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:keepScreenOn="true"
+        android:id="@id/scene_root"
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@id/exo_player"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="@color/black"
+            app:controller_layout_id="@layout/exo_player_custom_controller"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:use_controller="true" />
+
+        <FrameLayout
+            android:id="@id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/backgroundColor"
+            android:elevation="8dp"
+            android:transitionName="change_bound"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exo_player" />
+    </LinearLayout>
+</layout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+
+    <FrameLayout
+        android:id="@id/scene_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/exo_player"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/common_padding"
+            android:alpha="1"
+            android:background="@color/white"
+            android:elevation="8dp"
+            android:transitionName="fade_in" />
+
+        <FrameLayout
+            android:id="@id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom|end"
+            android:alpha="0"
+            android:background="@color/item_gray_selected"
+            android:elevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </FrameLayout>
+</layout>

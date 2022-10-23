@@ -1,0 +1,18 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Xem Bóng Đá</string>
+    <string name="item_menu_euro_schedule">Schedule</string>
+    <string name="item_menu_euro_title">Euro</string>
+    <string name="item_menu_copa_title">CoppaAmerica</string>
+    <string name="item_menu_highlight_title">HighLight</string>
+    <string name="item_menu_livescore_title">LiveScore</string>
+    <string name="tab_sub_link_source">Dự phòng</string>
+    <string name="tab_default_link_source">Uy tín</string>
+    <string name="test">Test</string>
+    <string name="ad_mod_banner_id" translatable="false">ca-app-pub-5503498903920416/4681826590</string>
+    <string name="ad_mod_native_id" translatable="false">ca-app-pub-5503498903920416/4861009747</string>
+    <string name="ad_mod_open_apps_id" translatable="false">ca-app-pub-5503498903920416/3064696437</string>
+    <string name="ad_unit" translatable="false">ca-app-pub-5503498903920416~8656276375</string>
+    <string name="viewer_count_def">1</string>
+    <string name="firebase_notification_channel_id_default">12345</string>
+    <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36</string>
+</resources>
