@@ -16,18 +16,15 @@ package com.google.android.ads.nativetemplates;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.ColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -35,7 +32,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.nativead.MediaView;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdView;
@@ -256,12 +252,16 @@ public class TemplateView extends FrameLayout {
             iconView.setVisibility(VISIBLE);
             GlideApp.with(iconView.getContext())
                     .load(icon.getUri())
+                    .error(com.kt.apps.xembongda.base.R.drawable.app_icon)
                     .centerCrop()
                     .into(iconView);
             iconView.setClipToOutline(true);
             iconView.setCropToPadding(true);
         } else {
-            iconView.setVisibility(GONE);
+            GlideApp.with(iconView.getContext())
+                    .load(com.kt.apps.xembongda.base.R.drawable.app_icon)
+                    .centerCrop()
+                    .into(iconView);
         }
 
         if (tertiaryView != null) {
