@@ -7,6 +7,7 @@ import com.kt.apps.xembongda.di.viewmodels.ViewModelKeys
 import com.kt.apps.xembongda.di.viewmodels.ViewModelModule
 import com.kt.apps.xembongda.ui.listmatch.FragmentListMatch
 import com.kt.apps.xembongda.ui.MainViewModel
+import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.comment.CommentViewModel
 import com.kt.apps.xembongda.ui.dashboard.DashboardViewModel
 import com.kt.apps.xembongda.ui.dashboard.FragmentDashboard
@@ -32,6 +33,9 @@ abstract class MainModule {
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun fragmentLiveScore(): FragmentLiveScore
+
+    @ContributesAndroidInjector(modules = [ViewModelModule::class])
+    internal abstract fun fragmentBottomPlayerPortrait(): FragmentBottomPlayerPortrait
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun fragmentHighlight(): FragmentHighlight

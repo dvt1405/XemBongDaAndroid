@@ -30,7 +30,9 @@ import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.PlayerActivity
+import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.dashboard.FragmentDashboard
+import com.kt.apps.xembongda.ui.highlight.FragmentHighlight
 import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.visible
 import javax.inject.Inject
@@ -232,6 +234,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     fun go(scene: Scene, transition: Transition = this.transition) {
+        if (currentScene == scene) return
         TransitionManager.go(scene, transition).also {
             currentScene = scene
         }
@@ -244,6 +247,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 exoPlayerManager.playerView = playerView
             }
         }
+        binding.container.isEnabled = scene != scene2
 
         if (scene == scene2) {
             exoPlayerManager.setupController(
@@ -252,6 +256,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 240,
                 false
             )
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.bottom, FragmentBottomPlayerPortrait())
+                .commit()
         } else if (scene == scene3) {
             exoPlayerManager.setupController(
                 this,
@@ -269,9 +276,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
-//                if (scene == scene3) {
-//                    exoPlayerManager.setupController(playerView, isMinimize = true)
-//                }
+                if (scene == scene3) {
+                    exoPlayerManager.showMinimizeControl()
+                }
+                if (scene == scene2) {
+                }
                 transition.removeListener(this)
             }
         })
