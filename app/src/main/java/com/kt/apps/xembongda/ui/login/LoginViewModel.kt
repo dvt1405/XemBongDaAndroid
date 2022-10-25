@@ -24,6 +24,7 @@ import com.kt.apps.xembongda.base.BaseViewModel
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.UserDTO
 import com.kt.apps.xembongda.model.authenticate.AuthenticateMethod
+import com.kt.apps.xembongda.usecase.GetAccessToken
 import com.kt.apps.xembongda.usecase.GetUserInfo
 import com.kt.apps.xembongda.usecase.Login
 import com.kt.apps.xembongda.utils.toAccessToken
@@ -34,7 +35,8 @@ import javax.inject.Inject
 
 data class LoginInteractors @Inject constructor(
     val login: Login,
-    val getUserInfo: GetUserInfo
+    val getUserInfo: GetUserInfo,
+    val getAccessToken: GetAccessToken,
 )
 
 fun String.isEmailValid(): Boolean {
@@ -86,9 +88,12 @@ class LoginViewModel @Inject constructor(val interactors: LoginInteractors) : Ba
         }
 
         try {
-            val currentUser = interactors.getUserInfo().blockingFirst()
-            _loginDataState.postValue(DataState.Success(currentUser))
-        } catch (_: Exception) {}
+            val token = interactors.getAccessToken().blockingFirst()
+            if (!token.isNeedReLogin) {
+                val currentUser = interactors.getUserInfo().blockingFirst()
+                _loginDataState.postValue(DataState.Success(currentUser))
+            }
+        } catch (_: Exception) { }
     }
 
     private fun checkUserPasswordValid(): Boolean {
@@ -136,7 +141,8 @@ class LoginViewModel @Inject constructor(val interactors: LoginInteractors) : Ba
 
             override fun parseResult(resultCode: Int, intent: Intent?): GoogleSignInAccount? {
                 return try {
-                    val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                    val task: Task<GoogleSignInAccount> =
+                        GoogleSignIn.getSignedInAccountFromIntent(intent)
                     val rs = task.result
                     rs
                 } catch (e: Exception) {

@@ -224,9 +224,10 @@ class ExoPlayerManager @Inject constructor(
         activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 
         oldScreenFlag?.let {
+            activity.window.attributes.flags = it
             activity.window.setFlags(it, it)
-            activity.window.decorView.systemUiVisibility = it
-            oldScreenFlag = null
+            activity.window.decorView.systemUiVisibility = 0
+//            oldScreenFlag = null
         } ?: activity.window.clearFlags(FULL_SCREEN_FLAG)
         updateFullScreenState(false)
     }
