@@ -8,9 +8,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -191,6 +188,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun handelGetMatchDetail(): (data: DataState<FootballMatchWithStreamLink>) -> Unit = {
         when (it) {
             is DataState.Loading -> {
+                exoPlayerManager.pause()
                 go(scene2)
             }
             is DataState.Success -> {
@@ -253,7 +251,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             exoPlayerManager.setupController(
                 this,
                 playerView,
-                240,
+                220,
                 false
             )
             supportFragmentManager.beginTransaction()
@@ -277,7 +275,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
                 if (scene == scene3) {
-                    exoPlayerManager.showMinimizeControl()
+                    exoPlayerManager.showMinimizeControl{
+                        go(scene2)
+                    }
                 }
                 if (scene == scene2) {
                 }

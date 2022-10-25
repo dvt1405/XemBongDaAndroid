@@ -60,29 +60,29 @@
             android:layoutDirection="ltr"
             android:visibility="visible">
 
-<!--            <ImageButton-->
-<!--                android:id="@id/exo_vr"-->
-<!--                style="@style/ExoStyledControls.Button.Bottom.VR" />-->
+            <!--            <ImageButton-->
+            <!--                android:id="@id/exo_vr"-->
+            <!--                style="@style/ExoStyledControls.Button.Bottom.VR" />-->
 
-<!--            <ImageButton-->
-<!--                android:id="@id/exo_shuffle"-->
-<!--                style="@style/ExoStyledControls.Button.Bottom.Shuffle" />-->
+            <!--            <ImageButton-->
+            <!--                android:id="@id/exo_shuffle"-->
+            <!--                style="@style/ExoStyledControls.Button.Bottom.Shuffle" />-->
 
-<!--            <ImageButton-->
-<!--                android:id="@id/exo_repeat_toggle"-->
-<!--                style="@style/ExoStyledControls.Button.Bottom.RepeatToggle" />-->
+            <!--            <ImageButton-->
+            <!--                android:id="@id/exo_repeat_toggle"-->
+            <!--                style="@style/ExoStyledControls.Button.Bottom.RepeatToggle" />-->
 
-<!--            <ImageButton-->
-<!--                android:id="@id/exo_subtitle"-->
-<!--                style="@style/ExoStyledControls.Button.Bottom.CC"-->
-<!--                android:visibility="gone" />-->
+            <!--            <ImageButton-->
+            <!--                android:id="@id/exo_subtitle"-->
+            <!--                style="@style/ExoStyledControls.Button.Bottom.CC"-->
+            <!--                android:visibility="gone" />-->
 
 
             <ImageButton
                 android:id="@id/exo_fullscreen"
                 style="@style/ExoStyledControls.Button.Bottom.FullScreen"
-                android:padding="12dp"
                 android:layout_margin="5dp"
+                android:padding="12dp"
                 android:visibility="visible" />
 
             <ImageButton
@@ -92,10 +92,10 @@
                 android:backgroundTint="#98000000"
                 android:visibility="gone" />
 
-<!--            <ImageButton-->
-<!--                android:id="@id/exo_overflow_show"-->
-<!--                style="@style/ExoStyledControls.Button.Bottom.OverflowShow"-->
-<!--                android:visibility="gone" />-->
+            <!--            <ImageButton-->
+            <!--                android:id="@id/exo_overflow_show"-->
+            <!--                style="@style/ExoStyledControls.Button.Bottom.OverflowShow"-->
+            <!--                android:visibility="gone" />-->
 
         </LinearLayout>
 
@@ -141,10 +141,10 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:visibility="gone"
             android:id="@+id/exo_play_list"
             style="@style/ExoStyledControls.Button.Bottom.FullScreen"
-            android:src="@drawable/ic_outline_video_library_24" />
+            android:src="@drawable/ic_outline_video_library_24"
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@id/exo_minimal_fullscreen"
@@ -158,13 +158,13 @@
 
 
     <FrameLayout
-        android:paddingHorizontal="8dp"
-        android:layout_marginTop="5dp"
         android:id="@+id/exo_controls_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:orientation="horizontal">
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
 
         <ImageButton
             android:id="@+id/exc_btn_close_player"
@@ -172,9 +172,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:foreground="?selectableItemBackground"
             android:background="@drawable/circle_background"
             android:backgroundTint="#30000000"
+            android:foreground="?selectableItemBackground"
             android:padding="12dp"
             android:src="@drawable/ic_round_keyboard_arrow_down_24"
             app:tint="@color/white" />
@@ -194,6 +194,15 @@
             android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_round_remove_red_eye_24" />
 
+        <ImageButton
+            android:id="@+id/exc_btn_resume_portrait"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            android:background="@drawable/background_circle"
+            android:backgroundTint="#50000000"
+            android:src="@drawable/ic_round_expand_less_24" />
     </FrameLayout>
 
     <LinearLayout

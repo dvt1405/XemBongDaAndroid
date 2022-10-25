@@ -1,5 +1,9 @@
 package com.kt.apps.xembongda.player
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
@@ -7,10 +11,10 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams
+import android.view.animation.AccelerateInterpolator
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -24,6 +28,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
+import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.visible
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.security.SecureRandom
@@ -63,6 +68,9 @@ class ExoPlayerManager @Inject constructor(
     private val exoFullScreenDrawableExit: Drawable by lazy {
         ContextCompat.getDrawable(context, R.drawable.ic_round_fullscreen_exit_24)!!
     }
+    private val btnResumePortraitViewVideoId by lazy {
+        R.id.exc_btn_resume_portrait
+    }
 
     var playerView: StyledPlayerView? = null
         set(value) {
@@ -93,7 +101,10 @@ class ExoPlayerManager @Inject constructor(
         minHeight: Int = LayoutParams.WRAP_CONTENT,
         isMinimize: Boolean = false
     ) {
-        if (!firstStreamSuccess) {
+        if (!isMinimize) {
+            hideBtnGotoPortrait()
+        }
+        if (!firstStreamSuccess || isFullScreen) {
             val layoutParams = playerView.layoutParams
             layoutParams?.height =
                 if (minHeight == LayoutParams.WRAP_CONTENT || minHeight == LayoutParams.MATCH_PARENT) {
@@ -208,8 +219,9 @@ class ExoPlayerManager @Inject constructor(
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     fun exitFullScreen(activity: AppCompatActivity) {
-        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 
         oldScreenFlag?.let {
             activity.window.setFlags(it, it)
@@ -219,14 +231,63 @@ class ExoPlayerManager @Inject constructor(
         updateFullScreenState(false)
     }
 
+    private val alphaAnimation by lazy {
+        ObjectAnimator.ofFloat(0f, 1f)
+            .apply {
+                this.duration = 400
+                this.interpolator = AccelerateInterpolator()
+            }
+    }
 
-    fun showMinimizeControl() {
-        if (!exoPlayer.isLoading && exoPlayer.playerError == null) {
+
+    fun showMinimizeControl(onResumeClick: () ->Unit) {
+        showBtnGotoPortrait(onResumeClick)
+        updateFullScreenState(false)
+        if (firstStreamSuccess) {
             val layoutParams = playerView?.layoutParams
             layoutParams?.height = LayoutParams.WRAP_CONTENT
             playerView?.layoutParams = layoutParams
         }
 
+    }
+
+    private fun hideBtnGotoPortrait() {
+        val btnResumePortraitViewVideo =
+            playerView?.findViewById<ImageButton>(btnResumePortraitViewVideoId)
+        val animUpdate = ValueAnimator.AnimatorUpdateListener {
+            btnResumePortraitViewVideo?.alpha = 1 - it.animatedFraction
+        }
+        alphaAnimation.addUpdateListener(animUpdate)
+        alphaAnimation.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                btnResumePortraitViewVideo?.gone()
+                alphaAnimation.removeAllUpdateListeners()
+                alphaAnimation.removeListener(this)
+            }
+        })
+    }
+
+    private fun showBtnGotoPortrait(onResumeClick: () ->Unit) {
+        val btnResumePortraitViewVideo =
+            playerView?.findViewById<ImageButton>(btnResumePortraitViewVideoId)
+        val animUpdate = ValueAnimator.AnimatorUpdateListener {
+            btnResumePortraitViewVideo?.alpha = it.animatedFraction
+        }
+        btnResumePortraitViewVideo?.alpha = 0f
+        btnResumePortraitViewVideo?.visible()
+        alphaAnimation.addUpdateListener(animUpdate)
+        alphaAnimation.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                alphaAnimation.removeAllUpdateListeners()
+                alphaAnimation.removeListener(this)
+            }
+        })
+        alphaAnimation.start()
+        btnResumePortraitViewVideo?.setOnClickListener {
+            onResumeClick()
+        }
     }
 
     private fun updateFullScreenState(isFullScreen: Boolean) {
@@ -359,15 +420,14 @@ class ExoPlayerManager @Inject constructor(
     }
 
     override fun onActivityStopped(activity: Activity) {
-        TODO("Not yet implemented")
+        playerView?.onPause()
+
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        TODO("Not yet implemented")
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        TODO("Not yet implemented")
     }
 
 }
