@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+
+        <variable
+            name="viewModel"
+            type="com.kt.apps.xembongda.ui.login.LoginViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundColor"
+        android:minHeight="500dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:alpha="1"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/ic_round_keyboard_backspace_24"
+            app:layout_constraintBottom_toBottomOf="@+id/title_register"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title_register" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Đăng nhập"
+            android:visibility="visible"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/btn_back"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/title_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Đăng ký"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/common_padding"
+            android:alpha="0.08"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginHorizontal="@dimen/common_padding"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="@dimen/common_padding_vertical"
+            android:background="@drawable/background_outline_16dp"
+            android:hint="Email"
+            android:paddingHorizontal="@dimen/common_padding"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="@dimen/text_size_13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line" />
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginHorizontal="@dimen/common_padding"
+            android:layout_marginTop="@dimen/common_padding"
+            android:background="@drawable/background_outline_16dp"
+            android:hint="Mật khẩu"
+            android:paddingHorizontal="@dimen/common_padding"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="@dimen/text_size_13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/retype_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_padding"
+            android:layout_marginTop="@dimen/common_padding"
+            android:background="@drawable/background_outline"
+            android:gravity="center_vertical"
+            android:hint="Nhập lại mật khẩu"
+            android:paddingHorizontal="@dimen/common_padding"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="@dimen/text_size_13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/password" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/common_padding"
+            android:layout_marginTop="@dimen/common_padding"
+            android:backgroundTint="@color/itemBackgroundColor"
+            android:insetTop="@dimen/padding_0dp"
+            android:insetBottom="0dp"
+            android:text="Đăng nhập"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15sp"
+            app:cornerRadius="50dp"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retype_password" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerButton"
+            android:layout_width="@dimen/padding_0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/common_padding"
+            android:backgroundTint="@color/itemBackgroundColor"
+            android:insetTop="@dimen/padding_0dp"
+            android:insetBottom="0dp"
+            android:text="Đăng kí"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15sp"
+            app:cornerRadius="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retype_password" />
+
+        <TextView
+            android:id="@+id/or_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="1dp"
+            android:text="Hoặc"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <ImageButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_padding"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
+            android:contentDescription="@string/btn_google_signin"
+            android:elevation="-1dp"
+            android:onClick="@{() -> viewModel.loginByGoogle()}"
+            android:src="@drawable/googleg_standard_color_18"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/or_label" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

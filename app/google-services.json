@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "384093714532",
+    "firebase_url": "https://xembongda-a6695-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "xembongda-a6695",
     "storage_bucket": "xembongda-a6695.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "384093714532-h8365reiql9ba41e88bukaabvnn93kma.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kt.apps.xembongda",
+            "certificate_hash": "a69f1b49b7f71279f33f6906766084d178dc26c8"
+          }
+        },
         {
           "client_id": "384093714532-rovk9ijjm9t87m29h1hja88c13raif0k.apps.googleusercontent.com",
           "client_type": 3
@@ -27,12 +36,13 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "384093714532-rovk9ijjm9t87m29h1hja88c13raif0k.apps.googleusercontent.com",
+              "client_id": "384093714532-k0kobeh3pk32lu62fn6kf6hts6r2sjg8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-5503498903920416~8656276375"
     }
   ],
   "configuration_version": "1"

@@ -16,6 +16,9 @@ import com.kt.apps.xembongda.ui.highlight.FragmentHighlightViewModel
 import com.kt.apps.xembongda.ui.listmatch.FragmentListMatchViewModel
 import com.kt.apps.xembongda.ui.livescore.FragmentLiveScore
 import com.kt.apps.xembongda.ui.livescore.FragmentLiveScoreViewModel
+import com.kt.apps.xembongda.ui.login.DialogFragmentLogin
+import com.kt.apps.xembongda.ui.login.FragmentLogin
+import com.kt.apps.xembongda.ui.login.LoginViewModel
 import com.kt.apps.xembongda.ui.tabs.FragmentListMatchTabs
 import dagger.Binds
 import dagger.Module
@@ -36,6 +39,12 @@ abstract class MainModule {
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun fragmentBottomPlayerPortrait(): FragmentBottomPlayerPortrait
+
+    @ContributesAndroidInjector(modules = [ViewModelModule::class])
+    internal abstract fun fragmentLogin(): FragmentLogin
+
+    @ContributesAndroidInjector(modules = [ViewModelModule::class])
+    internal abstract fun dialogFragmentLogin(): DialogFragmentLogin
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun fragmentHighlight(): FragmentHighlight
@@ -76,6 +85,11 @@ abstract class MainModule {
     @IntoMap
     @ViewModelKeys(CommentViewModel::class)
     internal abstract fun bindCommentViewModel(viewModel: CommentViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKeys(LoginViewModel::class)
+    internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
 
 
 }
