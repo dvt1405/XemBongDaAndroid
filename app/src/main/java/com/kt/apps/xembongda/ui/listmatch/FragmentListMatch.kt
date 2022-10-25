@@ -75,6 +75,8 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
             handleListMatch(it)
         }
         adapter.onItemRecyclerViewCLickListener = { item, position ->
+            if (adapter is AdapterFootballMatchBigAds) {
+            }
             mainActivityViewModel.getFootballMatchDetail(item)
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -100,6 +102,11 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
                 binding.swipeRefreshLayout.isEnabled = true
             }
         }
+    }
+
+    override fun onDestroy() {
+        adapter.clearAds()
+        super.onDestroy()
     }
 
     companion object {

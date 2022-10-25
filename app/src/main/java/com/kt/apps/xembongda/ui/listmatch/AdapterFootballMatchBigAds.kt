@@ -14,6 +14,7 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.base.adapter.BaseAdsAdapter
+import com.kt.apps.xembongda.base.adapter.OnItemRecyclerViewCLickListener
 import com.kt.apps.xembongda.databinding.ItemBigNativeAdsBinding
 import com.kt.apps.xembongda.databinding.ItemFootballMatchBinding
 import com.kt.apps.xembongda.model.FootballMatch
@@ -94,12 +95,16 @@ class AdapterFootballMatchBigAds :
         if (listAds.size > 2) {
             Log.e("TAG", "onRefresh: ${listAds.size}")
             for (i in 0..1) {
+                val ads = listAds.get(i)
                 listAds.removeAt(i)
+                ads.destroy()
             }
         } else {
+            listAds.forEach {
+                it.destroy()
+            }
             listAds.clear()
         }
-        Log.e("TAG", "onRefresh: ${listAds.size}")
         super.onRefresh(items, notifyDataChange)
     }
 
@@ -126,6 +131,36 @@ class AdapterFootballMatchBigAds :
         super.onViewRecycled(holder)
     }
 
+    private val parentVideoCallBack by lazy {
+        object : VideoController.VideoLifecycleCallbacks() {
+            override fun onVideoEnd() {
+                super.onVideoEnd()
+            }
+
+            override fun onVideoMute(p0: Boolean) {
+                super.onVideoMute(p0)
+            }
+
+            override fun onVideoPlay() {
+                super.onVideoPlay()
+            }
+
+            override fun onVideoPause() {
+                super.onVideoPause()
+            }
+
+            override fun onVideoStart() {
+                super.onVideoStart()
+            }
+        }
+    }
+
+
+    override fun pauseAds() {
+        super.pauseAds()
+        parentVideoCallBack.onVideoPause()
+    }
+
     override fun bindAds(adsBinding: ItemBigNativeAdsBinding, position: Int) {
         val adsPosition = if (position == _firstAdPosition) {
             0
@@ -133,35 +168,13 @@ class AdapterFootballMatchBigAds :
             1
         }
         try {
-            val nativeAd = if (listAds.size < 2) {
-                App.get().adsLoaderManager.getLastItem()?.also {
-                    listAds.add(it)
-                } ?: throw Exception()
+            if (listAds.size < 2) {
+                loadAds(adsPosition)
             } else {
-                listAds[adsPosition]
+                val nativeAd = listAds[adsPosition]
+                nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = parentVideoCallBack
+                adsBinding.nativeAdsView.setNativeAd(nativeAd)
             }
-            nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = object : VideoController.VideoLifecycleCallbacks() {
-                override fun onVideoEnd() {
-                    super.onVideoEnd()
-                }
-
-                override fun onVideoMute(p0: Boolean) {
-                    super.onVideoMute(p0)
-                }
-
-                override fun onVideoPlay() {
-                    super.onVideoPlay()
-                }
-
-                override fun onVideoPause() {
-                    super.onVideoPause()
-                }
-
-                override fun onVideoStart() {
-                    super.onVideoStart()
-                }
-            }
-            adsBinding.nativeAdsView.setNativeAd(nativeAd)
 
         } catch (e: Exception) {
             loadAds(adsPosition)
@@ -173,13 +186,20 @@ class AdapterFootballMatchBigAds :
         App.get().adsLoaderManager
             .preloadNativeAds {
                 synchronized(listAds) {
-                    listAds.add(it)
+                    if (true == it.mediaContent?.hasVideoContent()) {
+                        listAds.add(it)
+                    }
                 }
                 if (listAds.size > position && isLoadingThisAds) {
                     isLoadingThisAds = false
                     notifyItemChanged(position)
                 }
             }
+    }
+
+    override fun clearAds() {
+        super.clearAds()
+
     }
 
     override val oneBanner: Boolean

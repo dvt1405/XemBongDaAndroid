@@ -124,7 +124,6 @@ class AdapterFootballMatch :
                 adsBinding.nativeAdsView.setNativeAd(listAds[adsPosition])
             }
         } catch (e: Exception) {
-            Log.e("TAG", e.message, e)
             loadAds(adsBinding)
         }
     }
