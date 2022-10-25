@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:kt="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="userDTO"
+            type="com.kt.apps.xembongda.model.UserDTO" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,6 +22,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="@dimen/common_padding"
             android:adjustViewBounds="true"
+            kt:bindImageUri="@{userDTO != null ? userDTO.photoUrl : null}"
             app:srcCompat="@drawable/app_icon"
             app:layout_constraintBottom_toBottomOf="@id/formComment"
             app:layout_constraintStart_toStartOf="parent"

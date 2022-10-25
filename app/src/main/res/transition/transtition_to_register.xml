@@ -4,6 +4,15 @@
 
     <fade
         android:duration="500"
+        android:fadingMode="fade_out"
+        android:interpolator="@android:interpolator/anticipate_overshoot">
+        <targets>
+            <target android:targetId="@+id/title" />
+        </targets>
+    </fade>
+
+    <fade
+        android:duration="500"
         android:fadingMode="fade_in"
         android:interpolator="@android:interpolator/fast_out_slow_in">
         <targets>

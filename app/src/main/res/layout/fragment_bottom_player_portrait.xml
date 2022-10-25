@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.kt.apps.xembongda.ui.bottomplayerportrat.BottomPortraitPlayerViewModel" />
+
+        <variable
+            name="userDto"
+            type="com.kt.apps.xembongda.model.UserDTO" />
     </data>
 
     <LinearLayout
