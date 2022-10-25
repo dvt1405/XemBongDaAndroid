@@ -1,5 +1,6 @@
 package com.kt.apps.xembongda.utils
 
+import android.net.Uri
 import android.text.Html
 import android.text.format.DateUtils
 import android.util.Log
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.gms.common.SignInButton
 import com.kt.apps.xembongda.GlideApp
 import com.kt.apps.xembongda.base.R
 import java.text.SimpleDateFormat
@@ -23,6 +25,22 @@ fun bindViewVisibility(view: View, visible: Boolean) {
 @BindingAdapter("kt:bindImageUrl")
 fun bindImage(view: ImageView, url: String) {
     view.loadImage(url)
+}
+
+
+@BindingAdapter("kt:bindImageUri")
+fun bindImage(view: ImageView, url: Uri?) {
+    val placeHolder: Int = R.drawable.image_place_holder_corner_8
+    val defImg: Int = R.drawable.app_icon
+    if (url == null) {
+        view.loadImage(defImg)
+        return
+    }
+    GlideApp.with(view)
+        .load(url)
+        .error(defImg)
+        .placeholder(placeHolder)
+        .into(view)
 }
 
 @BindingAdapter("kt:bindImageUrlPlacholderLogo")
@@ -112,4 +130,9 @@ fun bindFormatDateTimeFromTimeMilli(view: TextView, dateTime: Long, newPattern: 
 @BindingAdapter("kt:bindFormatDateTime", "kt:dateTimePattern", requireAll = true)
 fun bindFormatDateTime(view: TextView, dateTime: Date, pattern: String) {
     view.text = dateTime.formatDateTime(pattern)
+}
+
+@BindingAdapter("android:onClick")
+fun bindSignInClick(button: SignInButton, method: () -> Unit) {
+    button.setOnClickListener { method.invoke() }
 }

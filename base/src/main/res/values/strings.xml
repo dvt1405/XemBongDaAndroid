@@ -3,4 +3,7 @@
     <string name="double_back_to_finish_title">Nhấn back lần nữa để thoát</string>
     <string name="today_format_date_title">Hôm nay</string>
     <string name="large_text">Hôm nay</string>
+    <string name="comment_count">5</string>
+    <string name="comment_place_holder">Thêm bình luận…</string>
+
 </resources>

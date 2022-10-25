@@ -2,7 +2,9 @@ package com.kt.apps.xembongda.di
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kt.apps.xembongda.di.mapkey.FootballRepositoryMapKey
+import com.kt.apps.xembongda.repository.IAuthenticateRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
+import com.kt.apps.xembongda.repository.auth.AuthenticateRepositoryImpl
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
 import com.kt.apps.xembongda.repository.footbalmatch.Football91Repository

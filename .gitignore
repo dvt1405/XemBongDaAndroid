@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+/base/src/main/assets/credentials.json

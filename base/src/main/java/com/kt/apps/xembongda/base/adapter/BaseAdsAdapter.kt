@@ -121,4 +121,12 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
         _listItem.removeAt(index)
         notifyItemRemoved(index)
     }
+
+    open fun clearAds() {
+
+    }
+
+    open fun pauseAds() {
+
+    }
 }

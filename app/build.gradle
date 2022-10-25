@@ -62,11 +62,14 @@ dependencies {
     implementation project(":base")
     implementation project(":skeleton")
     implementation project(":nativetemplates")
+//    implementation project(":dialoglib")
+//    implementation project(":tableview")
     implementation googlePlayServices.values()
     implementation exoPlayerDependencies.values()
     implementation externalDependencies.values()
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
     implementation 'com.applovin:applovin-sdk:+'
+    implementation authen.values()
 
 
 }

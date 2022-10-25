@@ -51,5 +51,8 @@ dependencies {
     implementation externalDependencies.values()
 //    implementation googlePlayServices.values()
     implementation project(":skeleton")
+    implementation project(":tableview")
+    implementation project(":dialoglib")
+    implementation authen.values()
 
 }

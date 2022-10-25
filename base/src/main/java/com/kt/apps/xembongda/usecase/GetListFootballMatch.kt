@@ -1,6 +1,5 @@
 package com.kt.apps.xembongda.usecase
 
-import android.util.Log
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
