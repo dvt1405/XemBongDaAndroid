@@ -7,6 +7,7 @@ import com.kt.apps.xembongda.di.viewmodels.ViewModelKeys
 import com.kt.apps.xembongda.di.viewmodels.ViewModelModule
 import com.kt.apps.xembongda.ui.listmatch.FragmentListMatch
 import com.kt.apps.xembongda.ui.MainViewModel
+import com.kt.apps.xembongda.ui.bottomplayerportrat.BottomPortraitPlayerViewModel
 import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.comment.CommentViewModel
 import com.kt.apps.xembongda.ui.dashboard.DashboardViewModel
@@ -90,6 +91,11 @@ abstract class MainModule {
     @IntoMap
     @ViewModelKeys(LoginViewModel::class)
     internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKeys(BottomPortraitPlayerViewModel::class)
+    internal abstract fun bindBottomPortraitViewModel(viewModel: BottomPortraitPlayerViewModel): ViewModel
 
 
 }
