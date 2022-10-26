@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
+import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.usecase.GetLinkStreamForMatch
@@ -25,6 +26,7 @@ interface BaseComponents {
     fun remoteConfig(): FirebaseRemoteConfig
     fun map(): Map<FootballRepoSourceFrom, IFootballMatchRepository>
     fun authenRepo(): IAuthenticateRepository
+    fun commentRepo(): ICommentRepository
 
 
     @Component.Builder

@@ -1,6 +1,7 @@
 package com.kt.apps.xembongda.model
 
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
+import com.kt.apps.xembongda.utils.removeAllSpecialChars
 
 class FootballMatch(
     val homeTeam: FootballTeam,
@@ -12,4 +13,7 @@ class FootballMatch(
     val league: String = "",
     val matchId: String = detailPage
 ) {
+    fun getMatchIdForComment() = "${
+        homeTeam.name.trim().removeAllSpecialChars()
+    }_${awayTeam.name.trim().removeAllSpecialChars()}"
 }

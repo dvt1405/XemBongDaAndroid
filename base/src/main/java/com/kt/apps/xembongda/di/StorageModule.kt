@@ -1,8 +1,10 @@
 package com.kt.apps.xembongda.di
 
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
+import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.auth.AuthenticateRepositoryImpl
+import com.kt.apps.xembongda.repository.comment.CommentRepositoryImpl
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.storage.IKeyValueStorage
 import com.kt.apps.xembongda.storage.KeyValueStorageImpl
@@ -23,4 +25,7 @@ abstract class StorageModule {
 
     @Binds
     abstract fun provideAuthenticateRepository(repoImpl: AuthenticateRepositoryImpl): IAuthenticateRepository
+
+    @Binds
+    abstract fun provideCommentRepository(repoImpl: CommentRepositoryImpl): ICommentRepository
 }

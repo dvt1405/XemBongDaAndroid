@@ -73,3 +73,14 @@ fun getTimeAgo(timeInMilli: Long): String {
         }
     }
 }
+
+
+fun String.removeAllSpecialChars(): String {
+    return this.replace(Regex("[^\\dA-Za-z]"), "")
+        .replace("\\s+", "")
+        .replace("-", "")
+        .replace(".", "")
+        .replace(" ", "")
+        .replace("\t", "")
+        .trim()
+}
