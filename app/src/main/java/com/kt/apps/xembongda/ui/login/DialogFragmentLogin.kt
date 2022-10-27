@@ -4,13 +4,12 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.databinding.BaseObservable
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
@@ -62,7 +61,8 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
         }
         binding.root.setOnClickListener {
             requireActivity().currentFocus?.clearFocus()
-            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
             imm?.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
 
         }
@@ -80,6 +80,64 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
             goto(TRANSITION_TO_LOGIN_MODE)
 
         }
+        viewModel.emailInvalid.observe(this) {
+            val layoutParams = binding.errorUserName.layoutParams as ConstraintLayout.LayoutParams
+
+            if (it == false && layoutParams.height == ConstraintLayout.LayoutParams.WRAP_CONTENT) {
+                return@observe
+            }
+
+            if (it != false && layoutParams.height == 1) {
+                return@observe
+            }
+
+            transitionToNotifyError(it, binding.errorUserName)
+        }
+
+        viewModel.passwordInvalid.observe(this) {
+            val layoutParams = binding.errorPassword.layoutParams as ConstraintLayout.LayoutParams
+
+            if (it == false && layoutParams.height == ConstraintLayout.LayoutParams.WRAP_CONTENT) {
+                return@observe
+            }
+
+            if (it != false && layoutParams.height == 1) {
+                return@observe
+            }
+
+            transitionToNotifyError(it, binding.errorPassword)
+        }
+
+        viewModel.retypePasswordInvalid.observe(this) {
+            val layoutParams =
+                binding.errorRetypePassword.layoutParams as ConstraintLayout.LayoutParams
+
+            if (it == false && viewModel.isRegisterMode.get()
+                && layoutParams.height == ConstraintLayout.LayoutParams.WRAP_CONTENT
+            ) {
+                return@observe
+            }
+
+            if (it != false && layoutParams.height == 1) {
+                return@observe
+            }
+            if (viewModel.isRegisterMode.get()) {
+                transitionToNotifyError(it, binding.errorRetypePassword)
+            }
+        }
+
+    }
+
+    private fun transitionToNotifyError(error: Boolean?, view: View) {
+        val constrainSet = ConstraintSet()
+        constrainSet.clone((binding.root as ConstraintLayout))
+        constrainSet.applyTo(binding.root as ConstraintLayout)
+        setDefaultNotifyFieldValidViewParams(error, view)
+
+        val transitionRes = R.transition.transtition_to_register
+        val transition = TransitionInflater.from(requireContext())
+            .inflateTransition(transitionRes)
+        TransitionManager.beginDelayedTransition(binding.root as ConstraintLayout, transition)
     }
 
     private fun handleLogin(it: DataState<UserDTO>?) {
@@ -95,7 +153,7 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
             is DataState.Error -> {
                 showErrorDialog({
 
-                }, content = getString(R.string.login_fail))
+                }, content = it.throwable.message)
 
             }
             else -> {
@@ -123,6 +181,24 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
         val constrainSet = ConstraintSet()
         constrainSet.clone(requireContext(), res)
         constrainSet.applyTo(binding.root as ConstraintLayout)
+
+        setDefaultNotifyFieldValidViewParams(viewModel.emailInvalid.value, binding.errorUserName)
+        setDefaultNotifyFieldValidViewParams(viewModel.passwordInvalid.value, binding.errorPassword)
+        if (viewModel.isRegisterMode.get()) {
+            setDefaultNotifyFieldValidViewParams(viewModel.retypePasswordInvalid.value, binding.errorRetypePassword)
+        }
+    }
+
+    private fun setDefaultNotifyFieldValidViewParams(isFieldValid: Boolean?, view: View) {
+        val layoutParams = view.layoutParams as ConstraintLayout.LayoutParams
+        if (isFieldValid == false) {
+            layoutParams.topMargin = (5 * resources.displayMetrics.scaledDensity).toInt()
+            layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+        } else {
+            layoutParams.topMargin = (0 * resources.displayMetrics.scaledDensity).toInt()
+            layoutParams.height = 1
+        }
+        view.layoutParams = layoutParams
     }
 
 
@@ -153,7 +229,7 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
             .start()
     }
 
-    private fun startTransitionTo(transitionToRegisterMode: Int) {
+    private fun startTransitionTo(transitionToRegisterMode: Int, vararg excludesView: Int) {
         val transitionRes = if (transitionToRegisterMode == TRANSITION_TO_REGISTER_MODE) {
             R.transition.transtition_to_register
         } else {
@@ -161,6 +237,9 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
         }
         val transition = TransitionInflater.from(requireContext())
             .inflateTransition(transitionRes)
+        excludesView.forEach {
+            transition.excludeTarget(it, true)
+        }
 
         transition.addListener(object : TransitionListenerAdapter() {
             override fun onTransitionStart(transition: Transition) {
@@ -181,6 +260,7 @@ class DialogFragmentLogin : BaseBottomSheetFragment<DialogFragmentLoginBinding>(
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
+        viewModel.removeReference()
         viewModel.isRegisterMode.set(false)
         onDismissListener?.invoke()
     }

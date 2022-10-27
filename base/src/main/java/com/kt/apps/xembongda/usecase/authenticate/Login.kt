@@ -1,14 +1,9 @@
-package com.kt.apps.xembongda.usecase
+package com.kt.apps.xembongda.usecase.authenticate
 
-import android.content.Context
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.internal.ClientSettings
-import com.google.android.gms.signin.internal.SignInClientImpl
 import com.kt.apps.xembongda.model.UserDTO
 import com.kt.apps.xembongda.model.authenticate.AuthenticateMethod
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
+import com.kt.apps.xembongda.usecase.BaseUseCase
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 

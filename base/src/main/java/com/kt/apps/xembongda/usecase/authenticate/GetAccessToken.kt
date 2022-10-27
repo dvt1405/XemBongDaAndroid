@@ -1,7 +1,8 @@
-package com.kt.apps.xembongda.usecase
+package com.kt.apps.xembongda.usecase.authenticate
 
 import com.kt.apps.xembongda.model.authenticate.AccessTokenDTO
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
+import com.kt.apps.xembongda.usecase.BaseUseCase
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 

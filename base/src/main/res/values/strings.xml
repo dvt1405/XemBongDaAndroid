@@ -6,4 +6,9 @@
     <string name="comment_count">5</string>
     <string name="comment_place_holder">Thêm bình luận…</string>
 
+    <string name="facebook_app_id">1234</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">56789</string>
+
+
 </resources>

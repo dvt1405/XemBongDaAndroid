@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 
 abstract class BaseViewModel : ViewModel() {
-    private val compositeDisposable = CompositeDisposable()
+    protected val compositeDisposable by lazy { CompositeDisposable() }
     init {
     }
     fun add(disposable: Disposable) {
@@ -13,8 +13,8 @@ abstract class BaseViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         compositeDisposable.clear()
+        super.onCleared()
     }
 
 }

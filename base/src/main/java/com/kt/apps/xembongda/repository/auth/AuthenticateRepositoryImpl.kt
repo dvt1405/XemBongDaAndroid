@@ -8,6 +8,9 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.GoogleAuthCredential
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kt.apps.xembongda.Constants
@@ -41,11 +44,11 @@ class AuthenticateRepositoryImpl @Inject constructor(
 
     override fun getCurrentUserInfo(): Observable<UserDTO> {
         return Observable.create {
-            val account = GoogleSignIn.getLastSignedInAccount(context)
-            if (account != null) {
-                it.onNext(account.toUserDTO())
-            } else if (auth.currentUser != null) {
+            if (auth.currentUser != null) {
                 it.onNext(auth.currentUser!!.toUserDto())
+            } else if (GoogleSignIn.getLastSignedInAccount(context) != null) {
+                val account = GoogleSignIn.getLastSignedInAccount(context)!!
+                auth.signInWithCredential(GoogleAuthProvider.getCredential(account.serverAuthCode, account.id))
             } else {
                 it.onError(UnAuthenException(ErrorCode.REQUIRED_LOGIN))
             }
@@ -55,17 +58,17 @@ class AuthenticateRepositoryImpl @Inject constructor(
 
     override fun getAccessToken(): Observable<AccessTokenDTO> {
         return Observable.create { emitter ->
-            if (GoogleSignIn.getLastSignedInAccount(context) != null) {
-                val account = GoogleSignIn.getLastSignedInAccount(context)
-                emitter.onNext(account!!.toAccessToken())
-
-            } else if (auth.currentUser != null) {
+            if (auth.currentUser != null) {
                 emitter.onNext(
                     AccessTokenDTO(
                         auth.currentUser?.uid ?: "",
                         auth.currentUser == null
                     )
                 )
+            } else if (GoogleSignIn.getLastSignedInAccount(context) != null) {
+                val account = GoogleSignIn.getLastSignedInAccount(context)
+                emitter.onNext(account!!.toAccessToken())
+
             } else {
                 emitter.onNext(AccessTokenDTO("", true))
                 emitter.onComplete()
@@ -88,7 +91,12 @@ class AuthenticateRepositoryImpl @Inject constructor(
                             emitter.onComplete()
                         }
                         .addOnFailureListener {
-                            emitter.onError(it)
+                            Log.e("TAG", it.message, it)
+                            if (it is FirebaseAuthUserCollisionException) {
+                                emitter.onError(Throwable(it.message!!))
+                            } else {
+
+                            }
                         }
                 }
 
@@ -112,16 +120,19 @@ class AuthenticateRepositoryImpl @Inject constructor(
 
                 is AuthenticateMethod.Email -> {
                     auth.signInWithEmailAndPassword(loginMethod.email, loginMethod.password)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                emitter.onNext(auth.currentUser.toUserDto())
-                                emitter.onComplete()
-                            } else {
-                                emitter.onError(Throwable("Not sign in success"))
-                            }
-                        }.addOnFailureListener {
+                        .addOnSuccessListener {
+                            emitter.onNext(it.user.toUserDto())
+                            emitter.onComplete()
+                        }
+                        .addOnFailureListener {
+                            Log.e("TAG", it.message, it)
                             if (!emitter.isDisposed) {
-                                emitter.onError(Throwable())
+                                emitter.onError(Throwable(it.message))
+                            }
+                        }
+                        .addOnCanceledListener {
+                            if (!emitter.isDisposed) {
+                                emitter.onComplete()
                             }
                         }
                 }

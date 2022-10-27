@@ -18,4 +18,5 @@
     <string name="btn_google_signin">Google sign-in</string>
     <string name="login_success">Đăng nhập thành công</string>
     <string name="login_fail">Đăng nhập thất bại!\nHãy thử lại nhé</string>
+    <string name="google_client_server_authen">384093714532-k0kobeh3pk32lu62fn6kf6hts6r2sjg8.apps.googleusercontent.com</string>
 </resources>

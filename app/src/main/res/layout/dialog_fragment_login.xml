@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundColor"
-        android:minHeight="500dp"
+        android:minHeight="550dp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp">
 
@@ -83,6 +83,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/line" />
 
+        <TextView
+            android:id="@+id/error_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0.01dp"
+            android:layout_marginStart="@dimen/common_padding"
+            android:layout_marginTop="0dp"
+            android:text="Email của bạn chưa hợp lệ thì phải"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@+id/email"
+            app:layout_constraintTop_toBottomOf="@+id/email" />
+
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
@@ -101,7 +113,19 @@
             android:textSize="@dimen/text_size_13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email" />
+            app:layout_constraintTop_toBottomOf="@id/error_user_name" />
+
+        <TextView
+            android:id="@+id/error_password"
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:layout_marginStart="@dimen/common_padding"
+            android:layout_marginTop="0dp"
+            android:text="Mật khẩu phải dài trên 8 kí tự và không chứa khoảng trắng"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/retype_password"
@@ -121,18 +145,31 @@
             android:textColorHint="@color/white"
             android:textSize="@dimen/text_size_13sp"
             app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password" />
+            app:layout_constraintTop_toBottomOf="@id/error_password" />
+
+        <TextView
+            android:id="@+id/error_retype_password"
+            android:layout_width="wrap_content"
+            android:layout_height="0.01dp"
+            android:layout_marginStart="@dimen/common_padding"
+            android:layout_marginTop="0dp"
+            android:text="Nhớ nhập mật khẩu trùng nhau nhé!"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:alpha="0.7"
+            app:layout_constraintStart_toStartOf="@+id/retype_password"
+            app:layout_constraintTop_toBottomOf="@+id/retype_password" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_login"
             android:layout_width="@dimen/padding_0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/common_padding"
-            android:layout_marginTop="20dp"
             android:backgroundTint="@color/itemBackgroundColor"
             android:clickable="@{viewModel.loginEnable}"
             android:enabled="@{viewModel.loginEnable}"
             android:insetTop="@dimen/padding_0dp"
+            android:layout_marginTop="@dimen/common_padding"
             android:insetBottom="0dp"
             android:onClick="@{() -> viewModel.loginUserPassword()}"
             android:text="Đăng nhập"
@@ -142,7 +179,7 @@
             app:cornerRadius="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
+            app:layout_constraintTop_toBottomOf="@+id/error_password" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/registerButton"
