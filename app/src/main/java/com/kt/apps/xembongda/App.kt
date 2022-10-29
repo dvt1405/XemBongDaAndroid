@@ -3,6 +3,7 @@ package com.kt.apps.xembongda
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kt.apps.xembongda.ads.AdsConfigManager
 import com.kt.apps.xembongda.ads.AdsNativeManager
+import com.kt.apps.xembongda.ads.RewardedAdsManager
 import com.kt.apps.xembongda.di.DaggerAppComponents
 import com.kt.apps.xembongda.di.DaggerBaseComponents
 import dagger.android.AndroidInjector
@@ -24,6 +25,9 @@ class App : DaggerApplication() {
 
     @Inject
     lateinit var mobileAdsConfig: AdsConfigManager
+
+    @Inject
+    lateinit var rewardedAdsManager: RewardedAdsManager
 
 
     private val showAds: Boolean by lazy {
@@ -51,9 +55,10 @@ class App : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
         mobileAdsConfig.init()
-        adsLoaderManager.preloadNativeAds(null)
+        adsLoaderManager.preloadNativeAds()
         app = this
         remoteConfig.fetch()
+//        rewardedAdsManager.preLoadAds()
     }
 
 

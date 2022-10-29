@@ -1,21 +1,34 @@
 package com.kt.apps.xembongda.ui.comment
 
-import android.util.Log
-import com.google.gson.Gson
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.base.adapter.BaseAdapter
 import com.kt.apps.xembongda.databinding.ItemCommentBinding
+import com.kt.apps.xembongda.model.comments.CommentDTO
 
-class AdapterComment : BaseAdapter<IBaseItemComment, ItemCommentBinding>() {
+class AdapterComment : BaseAdapter<BaseCommentFootballMatch, ItemCommentBinding>() {
     override val itemLayoutRes: Int
         get() = R.layout.item_comment
 
-    override fun bindItem(item: IBaseItemComment, binding: ItemCommentBinding, position: Int) {
+    override fun bindItem(
+        item: BaseCommentFootballMatch,
+        binding: ItemCommentBinding,
+        position: Int
+    ) {
         binding.item = item
     }
 
-    override fun onAdd(item: IBaseItemComment) {
+    override fun onAdd(item: BaseCommentFootballMatch) {
         super.onAdd(item)
-        Log.e("TAG", "onAdd: ${item.commentDetail}}" )
+    }
+
+    fun onAddNewComment(comment: CommentDTO) {
+        val newItem = BaseCommentFootballMatch(
+            comment.titleName,
+            comment.avatarUrl ?: "",
+            comment.commentDetail,
+            comment.uID,
+            comment.systemTime
+        )
+        onAdd(0, newItem)
     }
 }

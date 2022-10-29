@@ -1,21 +1,57 @@
 package com.kt.apps.xembongda.repository.comment
 
-import android.util.Log
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kt.apps.xembongda.di.BaseScope
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.comments.CommentDTO
 import com.kt.apps.xembongda.model.comments.CommentSpace
 import com.kt.apps.xembongda.repository.ICommentRepository
+import com.kt.apps.xembongda.storage.IKeyValueStorage
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class CommentRepositoryImpl @Inject constructor() : ICommentRepository {
+@BaseScope
+class CommentRepositoryImpl @Inject constructor(
+    private val ketValueStorage: IKeyValueStorage
+) : ICommentRepository {
     private val commentsDataBase by lazy {
         Firebase.firestore.collection("comments")
+    }
+
+    private val commentCountDataBase by lazy {
+        val commentForUserId = Firebase.auth.currentUser?.uid ?: return@lazy null
+        Firebase.database.getReference("comments")
+            .child(commentForUserId)
+    }
+    private var commentNum: Int = 0
+    private var commentSource: ObservableEmitter<Int>? = null
+
+    override fun loadTotalCommentCount(): Observable<Int> {
+        commentCountDataBase?.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                this@CommentRepositoryImpl.commentNum = snapshot.getValue(Int::class.java) ?: 0
+                commentSource?.onNext(commentNum)
+                ketValueStorage.save("comments", commentNum, Int::class.java)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+        return Observable.create {
+            commentSource = it
+        }
     }
 
     private var currentMatchCommentId: String? = null
@@ -59,12 +95,14 @@ class CommentRepositoryImpl @Inject constructor() : ICommentRepository {
             }
         }
         emitter.setCancellable {
-            Log.e("TAG", "On cancelable")
             task.remove()
         }
     }
 
     override fun sendCommentsFor(comment: CommentDTO, space: CommentSpace): Observable<CommentDTO> {
+        if (commentNum <= 0) {
+            return Observable.error(Throwable("Bạn đã vượt quá số lượt bình luận"))
+        }
         return Observable.create { emitter ->
             when (space) {
                 is CommentSpace.Match -> {
@@ -83,6 +121,7 @@ class CommentRepositoryImpl @Inject constructor() : ICommentRepository {
         match: FootballMatch,
         emitter: ObservableEmitter<CommentDTO>
     ) {
+        decreaseComment()
         commentsDataBase.document(match.getMatchIdForComment())
             .update(mapOf("${commentDTO.uID}_${commentDTO.systemTime}" to commentDTO.gzipToStr()))
             .addOnSuccessListener {
@@ -116,6 +155,31 @@ class CommentRepositoryImpl @Inject constructor() : ICommentRepository {
         }
     }
 
+    fun cacheCommentNum() {
+        ketValueStorage.save("comments", commentNum, Int::class.java)
+    }
+
+    fun decreaseComment() {
+        --commentNum
+        cacheCommentNum()
+        commentSource?.onNext(commentNum)
+        commentCountDataBase?.setValue(commentNum)
+            ?.addOnCanceledListener {
+            }?.addOnSuccessListener {
+            }?.addOnFailureListener {
+            }
+    }
+
+    override fun increaseComment(amount: Int) {
+        commentNum += amount
+        cacheCommentNum()
+        commentSource?.onNext(commentNum)
+        commentCountDataBase?.setValue(commentNum)
+            ?.addOnCanceledListener {
+            }?.addOnSuccessListener {
+            }?.addOnFailureListener {
+            }
+    }
     override fun replyCommentFor(comment: CommentDTO, target: CommentDTO, space: CommentSpace) {
         TODO("Not yet implemented")
     }

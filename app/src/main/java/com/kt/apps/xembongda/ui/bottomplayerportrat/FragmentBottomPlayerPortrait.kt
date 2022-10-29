@@ -3,13 +3,17 @@ package com.kt.apps.xembongda.ui.bottomplayerportrat
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.jakewharton.rxbinding4.view.clicks
+import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.base.BaseFragment
 import com.kt.apps.xembongda.databinding.FragmentBottomPlayerPortraitBinding
@@ -18,7 +22,6 @@ import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.comments.CommentDTO
 import com.kt.apps.xembongda.model.comments.CommentSpace
 import com.kt.apps.xembongda.player.ExoPlayerManager
-import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.comment.AdapterComment
 import com.kt.apps.xembongda.ui.comment.BaseCommentFootballMatch
@@ -27,6 +30,9 @@ import com.kt.apps.xembongda.ui.login.LoginViewModel
 import com.kt.skeleton.CustomItemDivider
 import com.kt.skeleton.KunSkeleton
 import com.kt.skeleton.runLayoutAnimation
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBinding>() {
@@ -36,9 +42,6 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
     @Inject
     lateinit var exoPlayerManager: ExoPlayerManager
-
-    @Inject
-    lateinit var commentRepo: ICommentRepository
 
     private val viewModel by lazy {
         ViewModelProvider(this, factory)[BottomPortraitPlayerViewModel::class.java]
@@ -116,10 +119,14 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
         viewModel.totalComment.observe(this) {
             handleTotalComment(it)
         }
+        mainViewModel.commentCount.observe(this) {
+            binding.formComment.commentCount.text = it.toString()
+        }
         loginViewModel.loginDataState.observe(this) {
             when (it) {
                 is DataState.Success -> {
                     binding.formComment.userDTO = it.data
+                    viewModel.loadComment(CommentSpace.Match(mainViewModel.currentMatch!!))
                 }
                 else -> {
 
@@ -150,6 +157,46 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             }
 
         }
+        viewModel.sendComment.observe(this) {
+            handleSendComment(it)
+        }
+
+        binding.formComment.btnReceiveComment.clicks()
+            .throttleFirst(3000, TimeUnit.MILLISECONDS)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                requestRewardedAds("Nhận thêm bình luận")
+            }, {
+                Log.e("TAG", it.message, it)
+            })
+    }
+
+    private fun handleSendComment(dataState: DataState<CommentDTO>) {
+        when(dataState) {
+            is DataState.Error -> {
+                requestRewardedAds("Hết lượt bình luận")
+            }
+            else -> {}
+        }
+    }
+
+    private fun requestRewardedAds(title: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage("Bạn có muốn nhận thêm lượt bình luận?")
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+                App.get().rewardedAdsManager.loadAds()
+                    .subscribe {
+                        it.show(requireActivity()) {
+                            mainViewModel.increaseComment(it)
+                        }
+                    }
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun handleTotalComment(it: DataState<List<BaseCommentFootballMatch>>) {
@@ -215,6 +262,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     override fun onDestroyView() {
+        binding.formComment.userDTO = null
         binding.viewModel = null
         super.onDestroyView()
     }

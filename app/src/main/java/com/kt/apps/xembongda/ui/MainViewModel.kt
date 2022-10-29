@@ -6,12 +6,16 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.gson.Gson
 import com.kt.apps.xembongda.base.BaseViewModel
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
+import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
+import com.kt.apps.xembongda.usecase.AsyncTransformer
 import com.kt.apps.xembongda.usecase.GetLinkStreamForMatch
 import com.kt.apps.xembongda.usecase.GetListFootballMatch
 import javax.inject.Inject
@@ -20,7 +24,8 @@ import javax.inject.Provider
 
 data class MainInteractors @Inject constructor(
     val getListFootballMatch: GetListFootballMatch,
-    val getLinkStreamForMatch: GetLinkStreamForMatch
+    val getLinkStreamForMatch: GetLinkStreamForMatch,
+    val commentRepository: ICommentRepository,
 )
 
 class MainViewModelFactory @Inject constructor(
@@ -79,11 +84,29 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
         )
     }
 
+    fun getListFootballMatchFromHtml(sourceFrom: FootballRepoSourceFrom, html: String) {
+        _listMatch.postValue(DataState.Loading())
+        add(
+            interactors.getListFootballMatch(sourceFrom, html)
+                .subscribe({
+                    Log.e("TAG", Gson().toJson(it))
+                    _listMatch.postValue(DataState.Success(it))
+                }, {
+                    Log.e("TAG", it.localizedMessage, it)
+                    _listMatch.postValue(DataState.Error(it))
+                })
+        )
+    }
+
     private val _matchWithStreamLink by lazy { MutableLiveData<DataState<FootballMatchWithStreamLink>>() }
     val matchDetail: LiveData<DataState<FootballMatchWithStreamLink>>
         get() = _matchWithStreamLink
+    private var _currentMatch: FootballMatch? = null
+    val currentMatch: FootballMatch?
+        get() = _currentMatch
 
     fun getFootballMatchDetail(match: FootballMatch) {
+        _currentMatch = match
         _matchWithStreamLink.postValue(DataState.Loading())
         add(
             interactors.getLinkStreamForMatch(match)
@@ -95,7 +118,42 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
         )
     }
 
+    fun getFootballMatchDetail(match: FootballMatch, html: String) {
+        _currentMatch = match
+        _matchWithStreamLink.postValue(DataState.Loading())
+        add(
+            interactors.getLinkStreamForMatch(match, html)
+                .subscribe({
+                    _matchWithStreamLink.postValue(DataState.Success(it))
+                }, {
+                    _matchWithStreamLink.postValue(DataState.Error(it))
+                })
+        )
+    }
+
     fun loadEuroData() {
 
+    }
+
+    private val _commentCount by lazy {
+        MutableLiveData<Int>()
+    }
+    val commentCount: LiveData<Int>
+        get() = _commentCount
+
+    fun loadCommentNum() {
+        add(
+            interactors.commentRepository
+                .loadTotalCommentCount()
+                .compose(AsyncTransformer())
+                .subscribe({
+                    _commentCount.postValue(it)
+                }, {
+                })
+        )
+    }
+
+    fun increaseComment(ads: RewardItem) {
+        interactors.commentRepository.increaseComment(ads.amount)
     }
 }
