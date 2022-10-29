@@ -13,6 +13,9 @@ class GetLinkStreamForMatch @Inject constructor(
     override fun prepareExecute(params: Map<String, Any>): Observable<FootballMatchWithStreamLink> {
         val repo = mapRepo[params["sourceFrom"] as FootballRepoSourceFrom]!!
         val match = params["match"] as FootballMatch
+        params["html"]?.let {
+            return@let repo.getLinkLiveStream(match, it as String)
+        }
         return repo.getLinkLiveStream(match)
     }
 
@@ -23,5 +26,14 @@ class GetLinkStreamForMatch @Inject constructor(
         )
     )
 
+    operator fun invoke(match: FootballMatch, sourceFrom: FootballRepoSourceFrom, html: String) = execute(
+        mapOf(
+            "sourceFrom" to sourceFrom,
+            "match" to match,
+            "html" to html
+        )
+    )
+
     operator fun invoke(match: FootballMatch) = invoke(match, match.sourceFrom)
+    operator fun invoke(match: FootballMatch, html: String) = invoke(match, match.sourceFrom, html)
 }

@@ -12,12 +12,23 @@ class GetListFootballMatch @Inject constructor(
     override fun prepareExecute(params: Map<String, Any>): Observable<List<FootballMatch>> {
         val sourceFrom = params["sourceFrom"] as FootballRepoSourceFrom
         val repo = sourceIterator[sourceFrom]
+        params["htmlPage"]?.let {
+            val html = it as String
+            return repo!!.parseMatchesFromHtml(html)
+        }
         return repo!!.getAllMatches()
     }
 
     operator fun invoke(sourceFrom: FootballRepoSourceFrom) = execute(
         mapOf(
             "sourceFrom" to sourceFrom
+        )
+    )
+
+    operator fun invoke(sourceFrom: FootballRepoSourceFrom, html: String) = execute(
+        mapOf(
+            "sourceFrom" to sourceFrom,
+            "htmlPage" to html
         )
     )
 }

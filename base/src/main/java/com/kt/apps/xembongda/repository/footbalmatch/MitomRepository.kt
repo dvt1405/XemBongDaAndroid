@@ -37,6 +37,68 @@ class MitomRepository @Inject constructor(
         ).toMutableMap()
     }
 
+    override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
+        return Observable.create { emiter ->
+            val bodyHtml = Jsoup.parse(html)
+            val matchItems = bodyHtml.getElementsByClass("list-channel col-xs-12 col-sm-6")
+            val listMatch = mutableListOf<FootballMatch>()
+            for (item in matchItems) {
+                try {
+                    val a = item.getElementsByTag("a")[0]
+                    if (a.className().contains("item")) {
+                        val teams = item.getElementsByClass("team col-xs-6")
+                        val homeLogo = teams[0].getElementsByTag("img")[0].attr("src")
+                        val awayLogo = teams[1].getElementsByTag("img")[0].attr("src")
+                        val title = item.getElementsByClass("title")[0].text().trim()
+                        val league = item.getElementsByClass("league")[0].html().trim()
+                        val timeDiv = item.getElementsByClass("time")[0]
+
+                        val statusStream = timeDiv.getElementsByTag("span")[0].text()
+                        val timeStream = timeDiv.ownText()
+
+                        val href = a.attr("href")
+                        val teamNames: List<String> = try {
+                            val arr = title.trim().split("-")
+                            if (arr.size < 2) throw Exception()
+                            arr
+                        } catch (e: Exception) {
+                            Log.e("TAG", e.message, e)
+                            listOf(title, title)
+                        }
+                        val match = FootballMatch(
+                            matchId = href,
+                            kickOffTime = timeStream,
+                            homeTeam = FootballTeam(
+                                name = teamNames[0],
+                                logo = homeLogo,
+                                id = href,
+                                league = league
+                            ),
+                            awayTeam = FootballTeam(
+                                name = teamNames[1],
+                                logo = awayLogo,
+                                id = href,
+                                league = league
+                            ),
+                            detailPage = href,
+                            league = league,
+                            statusStream = statusStream,
+                            sourceFrom = FootballRepoSourceFrom.MiTom
+                        )
+                        listMatch.add(match)
+                    }
+                } catch (e: Exception) {
+                    Log.e("TAG", e.message, e)
+                }
+            }
+            if (listMatch.isEmpty()) {
+//                emiter.onError(FootballMatchThrowable("Gặp sự cố với link"))
+            } else {
+                emiter.onNext(listMatch)
+            }
+            emiter.onComplete()
+        }
+    }
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         return Observable.create { emiter ->
             val mainPage = jsoupParse(config.url, cookie)
@@ -64,6 +126,7 @@ class MitomRepository @Inject constructor(
                             if (arr.size < 2) throw Exception()
                             arr
                         } catch (e: Exception) {
+                            Log.e("TAG", e.message, e)
                             listOf(title, title)
                         }
                         val match = FootballMatch(
@@ -108,10 +171,13 @@ class MitomRepository @Inject constructor(
             } else {
                 "${config.url}${match.detailPage.removePrefix("/")}"
             }
+            Log.e("TAG", "Detail page: $detailUrl")
             val list = mutableListOf<String>()
             val jsoupResponse = jsoupParse(detailUrl, cookie)
             cookie.putAll(jsoupResponse.cookie)
             val body = jsoupResponse.body
+            Log.e("TAG", "Detail page: ${body.html()}")
+
             val scripts = body.getElementsByTag("script")
             for (script in scripts) {
                 val html = script.html().trim()
@@ -169,5 +235,41 @@ class MitomRepository @Inject constructor(
             }
         }
         return list
+    }
+
+    override fun getLinkLiveStream(
+        match: FootballMatch,
+        html: String
+    ): Observable<FootballMatchWithStreamLink> {
+        return Observable.create { emiter ->
+            val detailUrl = if (match.detailPage.startsWith("http")) {
+                match.detailPage
+            } else {
+                "${config.url}${match.detailPage.removePrefix("/")}"
+            }
+//            Log.e("TAG", "Detail page: $detailUrl")
+            val list = mutableListOf<String>()
+//            val jsoupResponse = jsoupParse(detailUrl, cookie)
+//            cookie.putAll(jsoupResponse.cookie)
+            val body = Jsoup.parse(html)
+            Log.e("TAG", "Detail page: ${body.html()}")
+
+            val scripts = body.getElementsByTag("script")
+            for (script in scripts) {
+                val html = script.html().trim()
+                if (html.contains("urls")) {
+                    findLinkM3u8WithUrlInBodyElement(html, list)
+                } else if (html.contains("video_url")) {
+                    findM3u8WithVideoUrlInElement(html, list)
+                }
+            }
+            Log.e("TAG", Gson().toJson(list))
+            emiter.onNext(
+                FootballMatchWithStreamLink(
+                    match,
+                    list.map { LinkStreamWithReferer(it, detailUrl) })
+            )
+            emiter.onComplete()
+        }
     }
 }

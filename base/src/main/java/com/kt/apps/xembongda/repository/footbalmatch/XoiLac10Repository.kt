@@ -1,6 +1,5 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
-import android.util.Log
 import com.google.gson.Gson
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.exceptions.FootballMatchThrowable
@@ -21,13 +20,13 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-class Football91Repository @Inject constructor(
-    @RepositoryModule.Source91PhutConfig
+class XoiLac10Repository @Inject constructor(
+    @RepositoryModule.SourceXoiLac10Config
     private val config: FootballRepositoryConfig,
     private val keyValueStorage: IKeyValueStorage
 ) : IFootballMatchRepository {
     companion object {
-        private const val EXTRA_COOKIE_NAME = "extra:cookie_91phut"
+        private const val EXTRA_COOKIE_NAME = "extra:cookie_xoilac10"
     }
 
     private val cookie by lazy {
@@ -39,7 +38,7 @@ class Football91Repository @Inject constructor(
     }
 
     private val itemClassName: String by lazy {
-        config.itemClassName ?: "matches__item col-lg-6 col-sm-6"
+        config.itemClassName ?: "grid-matches__item"
     }
 
     override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
@@ -52,7 +51,6 @@ class Football91Repository @Inject constructor(
             val response = jsoupParse(config.url, cookie)
             cookie.putAll(response.cookie)
             val allMatches = response.body.getElementsByClass(itemClassName)
-
             for (match in allMatches) {
                 try {
                     val matchDetail = mapHtmlElementToFootballMatch(match)
@@ -71,36 +69,29 @@ class Football91Repository @Inject constructor(
     }
 
     private fun mapHtmlElementToFootballMatch(match: Element): FootballMatch {
-        Log.e("TAG", "=============mapHtmlElementToFootballMatch===============")
-        Log.e("TAG", match.html())
         val matchId = match.attributes().get("data-fid")
         val kickOffTime = match.attributes().get("data-runtime")
         val kickOffDay = match.attributes().get("data-day")
         val kickOffWeek = match.attributes().get("data-week")
         val a = match.getElementsByTag("a")[0]
         val link = a.attributes().get("href")
-        val body = a.getElementsByClass("matches__item--body")[0]
-        val header = a.getElementsByClass("matches__item--header")[0]
+        val body = match.getElementsByClass("grid-match__body")[0]
+        val header = match.getElementsByClass("grid-match__header")[0]
 
-        val league = header.getElementsByClass("matches__item--league")[0]
+        val league = header.getElementsByClass("grid-match__league")[0]
             .getElementsByClass("text-ellipsis")[0].text()
 
-        val date = header.getElementsByClass("matches__item--date")[0]
-            .getElementsByClass("date")[0].text()
+        val date = header.getElementsByClass("grid-match__date")[0].text()
 
-        val homeTeamLogo = body.getElementsByClass("matches__team matches__team--home")[0]
-            .getElementsByClass("team__logo")[0]
+        val homeTeamLogo = body.getElementsByClass("grid-match__team grid-match__team-home team team--home")[0]
             .getElementsByTag("img")[0].attributes().get("src")
 
-        val homeTeamName = body.getElementsByClass("matches__team matches__team--home")[0]
-            .getElementsByClass("team__name")[0].text()
+        val homeTeamName = body.getElementsByClass("grid-match__team--name grid-match__team--home-name")[0].text()
 
-        val awayTeamLogo = body.getElementsByClass("matches__team matches__team--away")[0]
-            .getElementsByClass("team__logo")[0]
+        val awayTeamLogo = body.getElementsByClass("grid-match__team grid-match__team-away team team--away")[0]
             .getElementsByTag("img")[0].attributes().get("src")
 
-        val awayTeamName = body.getElementsByClass("matches__team matches__team--away")[0]
-            .getElementsByClass("team__name")[0].text()
+        val awayTeamName = body.getElementsByClass("grid-match__team--name grid-match__team--away-name")[0].text()
 
         val home = FootballTeam(
             name = homeTeamName.replace("\n", " "),
@@ -128,12 +119,11 @@ class Football91Repository @Inject constructor(
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
         return Observable.create { emitter ->
             val lastMatchDetail: FootballMatchWithStreamLink?
-            Log.e("TAG", Gson().toJson(match))
             val listM3u8 = mutableListOf<LinkStreamWithReferer>()
             val response = jsoupParse(match.detailPage, cookie, Pair("referer", match.detailPage))
             cookie.putAll(response.cookie)
             val dom = response.body
-            val iframes = dom.getElementById("player")!!.getElementsByTag("iframe")
+            val iframes = dom.getElementById("play_main")!!.getElementsByTag("iframe")
             for (frame in iframes) {
                 val src = frame.attributes().get("src")
                 parseM3u8LinkFromFrame(src)?.let {
@@ -154,7 +144,7 @@ class Football91Repository @Inject constructor(
                         val linkDetail = link.attributes().get("href")
                         val detailDom = Jsoup.connect(linkDetail)
                             .execute().parse().body()
-                            .getElementById("player")!!
+                            .getElementById("play_main")!!
                             .getElementsByTag("iframe")[0]
                             .attributes()
                             .get("src")
@@ -172,7 +162,6 @@ class Football91Repository @Inject constructor(
             emitter.onNext(lastMatchDetail)
             emitter.onComplete()
         }.doOnError {
-            Log.e("TAG", it.message, it)
         }
     }
 

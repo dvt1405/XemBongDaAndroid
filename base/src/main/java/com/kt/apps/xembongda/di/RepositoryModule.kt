@@ -9,6 +9,7 @@ import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
 import com.kt.apps.xembongda.repository.footbalmatch.Football91Repository
 import com.kt.apps.xembongda.repository.footbalmatch.MitomRepository
+import com.kt.apps.xembongda.repository.footbalmatch.XoiLac10Repository
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -19,12 +20,17 @@ import javax.inject.Qualifier
 class RepositoryModule {
     companion object {
         private const val SOURCE_91_PHUT = "91phut"
+        private const val SOURCE_XOI_LAC_10_PHUT = "xoilac10"
         private const val SOURCE_MITOM = "mitom"
     }
 
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Source91Phut
+
+    @Qualifier
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class SourceXoiLac10Config
 
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
@@ -39,12 +45,20 @@ class RepositoryModule {
     annotation class Source91PhutConfig
 
     @Qualifier
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class SourceXoiLac10
+
+    @Qualifier
     @Retention
     annotation class SourceMitomConfig
 
     @Provides
     @Source91Phut
     fun provides91PhutUrl(config: FirebaseRemoteConfig) = config.getString(SOURCE_91_PHUT)
+
+    @Provides
+    @SourceXoiLac10
+    fun providesXoiLac10(config: FirebaseRemoteConfig) = config.getString(SOURCE_XOI_LAC_10_PHUT)
 
     @Provides
     @Regex91Phut
@@ -59,6 +73,17 @@ class RepositoryModule {
     @Source91PhutConfig
     fun providesFootball91PhutConfig(
         @Source91Phut urlFootball90P: String,
+        @Regex91Phut regex: String
+    ): FootballRepositoryConfig = FootballRepositoryConfig(
+        urlFootball90P,
+        regex
+    )
+
+    @Provides
+    @BaseScope
+    @SourceXoiLac10Config
+    fun providesXoiLac10Config(
+        @SourceXoiLac10 urlFootball90P: String,
         @Regex91Phut regex: String
     ): FootballRepositoryConfig = FootballRepositoryConfig(
         urlFootball90P,
@@ -85,4 +110,10 @@ class RepositoryModule {
     @BaseScope
     @FootballRepositoryMapKey(FootballRepoSourceFrom.MiTom)
     fun provideMitomRepo(repoImpl: MitomRepository): IFootballMatchRepository = repoImpl
+
+    @Provides
+    @IntoMap
+    @BaseScope
+    @FootballRepositoryMapKey(FootballRepoSourceFrom.XoiLac10)
+    fun provideXoiLacRepo(repoImpl: XoiLac10Repository): IFootballMatchRepository = repoImpl
 }
