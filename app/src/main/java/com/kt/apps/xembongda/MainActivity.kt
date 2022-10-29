@@ -29,7 +29,6 @@ import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.PlayerActivity
 import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.dashboard.FragmentDashboard
-import com.kt.apps.xembongda.ui.highlight.FragmentHighlight
 import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.visible
 import javax.inject.Inject
@@ -105,6 +104,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun initAction(savedInstanceState: Bundle?) {
         viewModel.matchDetail.observe(this, handelGetMatchDetail())
+        viewModel.loadCommentNum()
         exoPlayerManager.onCloseExoPlayer = {
             onBackPressed()
         }
