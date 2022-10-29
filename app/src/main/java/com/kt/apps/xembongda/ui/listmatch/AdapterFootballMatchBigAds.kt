@@ -14,6 +14,7 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.base.adapter.BaseAdsAdapter
+import com.kt.apps.xembongda.base.adapter.BaseAdsViewHolder
 import com.kt.apps.xembongda.base.adapter.OnItemRecyclerViewCLickListener
 import com.kt.apps.xembongda.databinding.ItemBigNativeAdsBinding
 import com.kt.apps.xembongda.databinding.ItemFootballMatchBinding
@@ -129,6 +130,9 @@ class AdapterFootballMatchBigAds :
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
+        if (holder is BaseAdsViewHolder<*>) {
+            videoController?.stop()
+        }
     }
 
     private val parentVideoCallBack by lazy {
@@ -151,6 +155,7 @@ class AdapterFootballMatchBigAds :
 
             override fun onVideoStart() {
                 super.onVideoStart()
+
             }
         }
     }
@@ -159,8 +164,9 @@ class AdapterFootballMatchBigAds :
     override fun pauseAds() {
         super.pauseAds()
         parentVideoCallBack.onVideoPause()
+        videoController?.stop()
     }
-
+    private var videoController: VideoController? = null
     override fun bindAds(adsBinding: ItemBigNativeAdsBinding, position: Int) {
         val adsPosition = if (position == _firstAdPosition) {
             0
@@ -172,7 +178,13 @@ class AdapterFootballMatchBigAds :
                 loadAds(adsPosition)
             } else {
                 val nativeAd = listAds[adsPosition]
-                nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks = parentVideoCallBack
+                nativeAd.mediaContent?.videoController?.videoLifecycleCallbacks =
+                    object : VideoController.VideoLifecycleCallbacks() {
+                        override fun onVideoStart() {
+                            super.onVideoStart()
+                            videoController = nativeAd.mediaContent?.videoController
+                        }
+                    }
                 adsBinding.nativeAdsView.setNativeAd(nativeAd)
             }
 
@@ -184,17 +196,7 @@ class AdapterFootballMatchBigAds :
     fun loadAds(position: Int) {
         var isLoadingThisAds = true
         App.get().adsLoaderManager
-            .preloadNativeAds {
-                synchronized(listAds) {
-                    if (true == it.mediaContent?.hasVideoContent()) {
-                        listAds.add(it)
-                    }
-                }
-                if (listAds.size > position && isLoadingThisAds) {
-                    isLoadingThisAds = false
-                    notifyItemChanged(position)
-                }
-            }
+            .preloadNativeAds()
     }
 
     override fun clearAds() {

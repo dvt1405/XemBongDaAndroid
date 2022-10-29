@@ -33,4 +33,16 @@ class FragmentListMatchViewModel @Inject constructor(
                 })
         )
     }
+
+    fun getListFootballMatchFromHtml(sourceFrom: FootballRepoSourceFrom, html: String) {
+        _listMatch.postValue(DataState.Loading())
+        add(
+            interactors.getListFootballMatch(sourceFrom, html)
+                .subscribe({
+                    _listMatch.postValue(DataState.Success(it))
+                }, {
+                    _listMatch.postValue(DataState.Error(it))
+                })
+        )
+    }
 }
