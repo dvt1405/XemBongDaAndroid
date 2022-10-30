@@ -3,6 +3,7 @@ package com.kt.apps.xembongda.di
 import android.app.Application
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.kt.apps.xembongda.api.BinhLuan90PhutApi
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
 import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
@@ -27,6 +28,7 @@ interface BaseComponents {
     fun map(): Map<FootballRepoSourceFrom, IFootballMatchRepository>
     fun authenRepo(): IAuthenticateRepository
     fun commentRepo(): ICommentRepository
+    fun api(): BinhLuan90PhutApi
 
 
     @Component.Builder

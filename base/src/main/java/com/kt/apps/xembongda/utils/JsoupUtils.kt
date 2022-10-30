@@ -1,6 +1,5 @@
 package com.kt.apps.xembongda.utils
 
-import android.util.Log
 import com.kt.apps.xembongda.Constants
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -34,7 +33,6 @@ fun jsoupParse(
 ): JsoupResponse {
     val connection = jsoupConnect(url, cookie, *header).execute()
     val body = connection.parse().body()
-    Log.e("TAG", body.html())
     return JsoupResponse(
         body,
         mutableMapOf<String, String>().apply {

@@ -111,7 +111,7 @@ class XoiLac10Repository @Inject constructor(
             kickOffTime,
             kickOffWeek,
             link,
-            FootballRepoSourceFrom.Phut91,
+            FootballRepoSourceFrom.XoiLac10,
             league
         )
     }
