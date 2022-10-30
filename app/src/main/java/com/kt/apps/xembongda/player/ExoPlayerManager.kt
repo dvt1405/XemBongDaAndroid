@@ -10,8 +10,9 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
+import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams
 import android.view.animation.AccelerateInterpolator
@@ -29,22 +30,17 @@ import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
 import com.kt.apps.xembongda.utils.gone
+import com.kt.apps.xembongda.utils.trustEveryone
 import com.kt.apps.xembongda.utils.visible
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.security.SecureRandom
-import java.security.cert.CertificateException
-import java.security.cert.X509Certificate
 import javax.inject.Inject
-import javax.net.ssl.HttpsURLConnection
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
 
 
 class ExoPlayerManager @Inject constructor(
-    private val context: Context
-) : Application.ActivityLifecycleCallbacks {
+    private val context: Context,
+    private val audioFocusManager: AudioFocusManager
+) : Application.ActivityLifecycleCallbacks, AudioFocusManager.OnFocusChange {
     companion object {
-        private val TAG = "TAG"
         private const val FULL_SCREEN_FLAG = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -72,10 +68,73 @@ class ExoPlayerManager @Inject constructor(
         R.id.exc_btn_resume_portrait
     }
 
+    private val audioAttr by lazy {
+        AudioAttributes.Builder()
+            .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+            .setFlags(C.FLAG_AUDIBILITY_ENFORCED)
+            .setUsage(C.USAGE_MEDIA)
+            .apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    setAllowedCapturePolicy(C.ALLOW_CAPTURE_BY_NONE)
+                }
+            }
+            .build()
+    }
+
+    private val playerListener by lazy {
+        object : Player.Listener {
+            override fun onIsLoadingChanged(isLoading: Boolean) {
+                super.onIsLoadingChanged(isLoading)
+            }
+
+            override fun onPlaybackStateChanged(state: Int) {
+                super.onPlaybackStateChanged(state)
+                when (state) {
+                    ExoPlayer.STATE_IDLE -> {
+                    }
+                    ExoPlayer.STATE_BUFFERING -> {
+                    }
+                    ExoPlayer.STATE_READY -> {
+                        val layoutParams = playerView?.layoutParams
+                        layoutParams?.height = if (isFullScreen) {
+                            LayoutParams.MATCH_PARENT
+                        } else {
+                            LayoutParams.WRAP_CONTENT
+                        }
+                        playerView?.layoutParams = layoutParams
+                        firstStreamSuccess = true
+                    }
+                    ExoPlayer.STATE_ENDED -> {
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                if (!firstStreamSuccess) {
+                    val layoutParams = _currentTargetPlayerView?.layoutParams
+                    layoutParams?.height =
+                        lastMinHeightSetupForController ?: LayoutParams.WRAP_CONTENT
+                    _currentTargetPlayerView?.layoutParams = layoutParams
+                }
+            }
+
+        }
+    }
+
+
+    var exoPlayer: ExoPlayer? = null
+    var isFullScreen: Boolean = false
+    var oldScreenFlag: Int? = null
+
     var playerView: StyledPlayerView? = null
         set(value) {
             field = value
-            field?.player = exoPlayer
+            field?.player = exoPlayer ?: buildExoPlayer().also {
+                exoPlayer = it
+            }
         }
     private val scaleDensity by lazy {
         context.resources.displayMetrics.scaledDensity
@@ -87,7 +146,10 @@ class ExoPlayerManager @Inject constructor(
     var onCloseExoPlayer: (() -> Unit)? = null
 
     fun switchTargetView(targetPlayerView: StyledPlayerView, isFullScreen: Boolean = false) {
-        StyledPlayerView.switchTargetView(exoPlayer, playerView, targetPlayerView)
+        if (exoPlayer == null) {
+            exoPlayer = buildExoPlayer()
+        }
+        StyledPlayerView.switchTargetView(exoPlayer!!, playerView, targetPlayerView)
         playerView = targetPlayerView
         _currentTargetPlayerView = targetPlayerView
         if (isFullScreen) {
@@ -147,65 +209,6 @@ class ExoPlayerManager @Inject constructor(
         }
     }
 
-    private val audioAttr by lazy {
-        AudioAttributes.Builder()
-            .build()
-    }
-
-    private val playerListener by lazy {
-        object : Player.Listener {
-            override fun onIsLoadingChanged(isLoading: Boolean) {
-                super.onIsLoadingChanged(isLoading)
-            }
-
-            override fun onPlaybackStateChanged(state: Int) {
-                super.onPlaybackStateChanged(state)
-                when (state) {
-                    ExoPlayer.STATE_IDLE -> {
-                    }
-                    ExoPlayer.STATE_BUFFERING -> {
-                    }
-                    ExoPlayer.STATE_READY -> {
-                        val layoutParams = playerView?.layoutParams
-                        layoutParams?.height = if (isFullScreen) {
-                            LayoutParams.MATCH_PARENT
-                        } else {
-                            LayoutParams.WRAP_CONTENT
-                        }
-                        playerView?.layoutParams = layoutParams
-                        firstStreamSuccess = true
-                    }
-                    ExoPlayer.STATE_ENDED -> {
-                    }
-                    else -> {
-                    }
-                }
-            }
-
-            override fun onPlayerError(error: PlaybackException) {
-                super.onPlayerError(error)
-                if (!firstStreamSuccess) {
-                    val layoutParams = _currentTargetPlayerView?.layoutParams
-                    layoutParams?.height =
-                        lastMinHeightSetupForController ?: LayoutParams.WRAP_CONTENT
-                    _currentTargetPlayerView?.layoutParams = layoutParams
-                }
-            }
-
-        }
-    }
-
-
-    val exoPlayer by lazy {
-        ExoPlayer.Builder(context)
-            .setWakeMode(C.WAKE_MODE_LOCAL)
-            .setAudioAttributes(audioAttr, true)
-            .setHandleAudioBecomingNoisy(true)
-            .build()
-    }
-    var isFullScreen: Boolean = false
-    var oldScreenFlag: Int? = null
-
     fun enterFullScreen(activity: AppCompatActivity) {
         if (!isFullScreen) {
             oldScreenFlag = activity.window.attributes.flags
@@ -227,7 +230,6 @@ class ExoPlayerManager @Inject constructor(
             activity.window.attributes.flags = it
             activity.window.setFlags(it, it)
             activity.window.decorView.systemUiVisibility = 0
-//            oldScreenFlag = null
         } ?: activity.window.clearFlags(FULL_SCREEN_FLAG)
         updateFullScreenState(false)
     }
@@ -241,7 +243,7 @@ class ExoPlayerManager @Inject constructor(
     }
 
 
-    fun showMinimizeControl(onResumeClick: () ->Unit) {
+    fun showMinimizeControl(onResumeClick: () -> Unit) {
         showBtnGotoPortrait(onResumeClick)
         updateFullScreenState(false)
         if (firstStreamSuccess) {
@@ -269,7 +271,7 @@ class ExoPlayerManager @Inject constructor(
         })
     }
 
-    private fun showBtnGotoPortrait(onResumeClick: () ->Unit) {
+    private fun showBtnGotoPortrait(onResumeClick: () -> Unit) {
         val btnResumePortraitViewVideo =
             playerView?.findViewById<ImageButton>(btnResumePortraitViewVideoId)
         val animUpdate = ValueAnimator.AnimatorUpdateListener {
@@ -304,45 +306,11 @@ class ExoPlayerManager @Inject constructor(
         }
     }
 
-    private fun trustEveryone() {
-        try {
-            HttpsURLConnection.setDefaultHostnameVerifier { name, password ->
-                return@setDefaultHostnameVerifier true
-            }
-            val context = SSLContext.getInstance("TLS")
-            context.init(
-                null, arrayOf<X509TrustManager>(@SuppressLint("CustomX509TrustManager")
-                object : X509TrustManager {
-                    @SuppressLint("TrustAllX509TrustManager")
-                    @Throws(CertificateException::class)
-                    override fun checkClientTrusted(
-                        chain: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    @SuppressLint("TrustAllX509TrustManager")
-                    @Throws(CertificateException::class)
-                    override fun checkServerTrusted(
-                        chain: Array<X509Certificate?>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate?> {
-                        return arrayOfNulls(0)
-                    }
-                }), SecureRandom()
-            )
-            HttpsURLConnection.setDefaultSSLSocketFactory(
-                context.socketFactory
-            )
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
-
     fun playVideo(data: List<LinkStreamWithReferer>) {
+        audioFocusManager.requestFocus(this)
+        if (exoPlayer == null) {
+            exoPlayer = buildExoPlayer()
+        }
         val dfSource: DefaultHttpDataSource.Factory = DefaultHttpDataSource.Factory()
         dfSource.setDefaultRequestProperties(
             getHeader90pLink(data.first().referer)
@@ -363,14 +331,20 @@ class ExoPlayerManager @Inject constructor(
         }
 
         playerView?.setControllerHideDuringAds(true)
-        exoPlayer.setMediaSources(mediaSources)
-        exoPlayer.addListener(playerListener)
-        exoPlayer.playWhenReady = true
-        exoPlayer.prepare()
+        exoPlayer?.setMediaSources(mediaSources)
+        exoPlayer?.addListener(playerListener)
+        exoPlayer?.playWhenReady = true
+        exoPlayer?.prepare()
     }
 
+    private fun buildExoPlayer() = ExoPlayer.Builder(context)
+        .setWakeMode(C.WAKE_MODE_LOCAL)
+        .setAudioAttributes(audioAttr, true)
+        .setHandleAudioBecomingNoisy(true)
+        .build()
+
     fun pause() {
-        exoPlayer.pause()
+        exoPlayer?.pause()
     }
 
     private fun getHeader90pLink(referer: String): Map<String, String> {
@@ -383,7 +357,6 @@ class ExoPlayerManager @Inject constructor(
 
         return mutableMapOf(
             "accept-encoding" to "gzip, deflate, br",
-            "accept-language" to "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5,am;q=0.4,en-AU;q=0.3",
             "origin" to referer.getBaseUrl(),
             "referer" to referer.trim(),
             "sec-fetch-dest" to "empty",
@@ -413,10 +386,12 @@ class ExoPlayerManager @Inject constructor(
     }
 
     override fun onActivityResumed(activity: Activity) {
+        exoPlayer?.play()
         playerView?.onResume()
     }
 
     override fun onActivityPaused(activity: Activity) {
+        exoPlayer?.pause()
         playerView?.onPause()
     }
 
@@ -429,6 +404,20 @@ class ExoPlayerManager @Inject constructor(
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+//        exoPlayer?.mediaItem
+//        exoPlayer?.release()
+//        exoPlayer = null
+//        playerView = null
+    }
+
+    override fun onAudioFocus() {
+        playerView?.onResume()
+        exoPlayer?.play()
+    }
+
+    override fun onAudioLossFocus() {
+        playerView?.onPause()
+        exoPlayer?.pause()
     }
 
 }
