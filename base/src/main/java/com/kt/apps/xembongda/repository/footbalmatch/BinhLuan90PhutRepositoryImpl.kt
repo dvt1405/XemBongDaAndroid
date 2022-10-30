@@ -59,7 +59,6 @@ class BinhLuan90PhutRepositoryImpl @Inject constructor(
     }
 
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
-        Log.e("TAG", match.detailPage)
         return api.getMatchDetail(match.matchId, match.matchId)
             .map {
                 FootballMatchWithStreamLink(

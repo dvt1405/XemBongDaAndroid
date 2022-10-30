@@ -187,7 +187,6 @@ class MitomRepository @Inject constructor(
                     findM3u8WithVideoUrlInElement(html, list)
                 }
             }
-            Log.e("TAG", Gson().toJson(list))
             emiter.onNext(
                 FootballMatchWithStreamLink(
                     match,
@@ -263,7 +262,6 @@ class MitomRepository @Inject constructor(
                     findM3u8WithVideoUrlInElement(html, list)
                 }
             }
-            Log.e("TAG", Gson().toJson(list))
             emiter.onNext(
                 FootballMatchWithStreamLink(
                     match,

@@ -71,8 +71,6 @@ class Football91Repository @Inject constructor(
     }
 
     private fun mapHtmlElementToFootballMatch(match: Element): FootballMatch {
-        Log.e("TAG", "=============mapHtmlElementToFootballMatch===============")
-        Log.e("TAG", match.html())
         val matchId = match.attributes().get("data-fid")
         val kickOffTime = match.attributes().get("data-runtime")
         val kickOffDay = match.attributes().get("data-day")
@@ -128,7 +126,6 @@ class Football91Repository @Inject constructor(
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
         return Observable.create { emitter ->
             val lastMatchDetail: FootballMatchWithStreamLink?
-            Log.e("TAG", Gson().toJson(match))
             val listM3u8 = mutableListOf<LinkStreamWithReferer>()
             val response = jsoupParse(match.detailPage, cookie, Pair("referer", match.detailPage))
             cookie.putAll(response.cookie)

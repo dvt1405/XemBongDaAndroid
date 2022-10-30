@@ -14,7 +14,6 @@ fun GoogleSignInAccount.toAccessToken(): AccessTokenDTO {
 }
 
 fun GoogleSignInAccount.toUserDTO(): UserDTO {
-    Log.e("TAG", "toUserDTO: ${Gson().toJson(this)}")
     return UserDTO(
         name = this.displayName ?: "",
         email = this.email ?: "",
