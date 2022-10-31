@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
-import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -20,6 +18,7 @@ abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     abstract fun initView(savedInstanceState: Bundle?)
     abstract fun initAction(savedInstanceState: Bundle?)
 
+    protected var leakView: View? = null
     init {
     }
 
@@ -37,7 +36,8 @@ abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, layoutResId, container, false)
         initView(savedInstanceState)
-        return binding.root
+        leakView = binding.root
+        return leakView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
