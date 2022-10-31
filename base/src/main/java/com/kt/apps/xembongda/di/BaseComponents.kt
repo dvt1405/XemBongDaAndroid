@@ -1,15 +1,14 @@
 package com.kt.apps.xembongda.di
 
-import android.app.Application
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kt.apps.xembongda.api.BinhLuan90PhutApi
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
 import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
+import com.kt.apps.xembongda.repository.IHighLightRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
-import com.kt.apps.xembongda.usecase.GetLinkStreamForMatch
-import com.kt.apps.xembongda.usecase.GetListFootballMatch
+import com.kt.apps.xembongda.storage.IKeyValueStorage
 import dagger.BindsInstance
 import dagger.Component
 
@@ -18,7 +17,8 @@ import dagger.Component
         RepositoryModule::class,
         BaseModule::class,
         FirebaseModule::class,
-        StorageModule::class
+        StorageModule::class,
+        HighLightModule::class
     ]
 )
 @BaseScope
@@ -29,6 +29,8 @@ interface BaseComponents {
     fun authenRepo(): IAuthenticateRepository
     fun commentRepo(): ICommentRepository
     fun api(): BinhLuan90PhutApi
+    fun iKeyValueStorage(): IKeyValueStorage
+    fun iHighLightRepo(): IHighLightRepository
 
 
     @Component.Builder
