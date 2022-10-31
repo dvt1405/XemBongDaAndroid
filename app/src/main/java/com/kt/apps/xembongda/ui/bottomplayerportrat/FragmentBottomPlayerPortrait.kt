@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,19 +20,22 @@ import com.kt.apps.xembongda.base.BaseFragment
 import com.kt.apps.xembongda.databinding.FragmentBottomPlayerPortraitBinding
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
+import com.kt.apps.xembongda.model.UserDTO
 import com.kt.apps.xembongda.model.comments.CommentDTO
 import com.kt.apps.xembongda.model.comments.CommentSpace
+import com.kt.apps.xembongda.model.highlights.HighLightDTO
+import com.kt.apps.xembongda.model.highlights.HighLightDetail
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.comment.AdapterComment
 import com.kt.apps.xembongda.ui.comment.BaseCommentFootballMatch
+import com.kt.apps.xembongda.ui.highlight.FragmentHighlightViewModel
 import com.kt.apps.xembongda.ui.login.DialogFragmentLogin
 import com.kt.apps.xembongda.ui.login.LoginViewModel
 import com.kt.skeleton.CustomItemDivider
 import com.kt.skeleton.KunSkeleton
 import com.kt.skeleton.runLayoutAnimation
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -55,6 +59,10 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
         ViewModelProvider(requireActivity(), factory)[MainViewModel::class.java]
     }
 
+    private val highLightViewModel by lazy {
+        ViewModelProvider(requireActivity(), factory)[FragmentHighlightViewModel::class.java]
+    }
+
     private val adapterListM3u8Link by lazy { AdapterListM3u8Link() }
     private val adapterComment by lazy { AdapterComment() }
 
@@ -63,13 +71,20 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             .adapter(adapterListM3u8Link)
             .layoutManager(
                 LinearLayoutManager(
-                    requireContext(),
+                    requireContext().applicationContext,
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
             )
             .layoutItem(R.layout.item_link_stream_skeleton)
             .build()
+    }
+
+    private val type by lazy {
+        when(requireArguments().getInt(EXTRA_TYPE)) {
+            Type.HighLight.value -> Type.HighLight
+            else -> Type.LiveStream
+        }
     }
 
     private val titleSkeleton by lazy {
@@ -112,10 +127,10 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
     override fun initAction(savedInstanceState: Bundle?) {
         clickToDismissKeyboard()
-        viewModel.loadComment(CommentSpace.Match(mainViewModel.currentMatch!!))
-        mainViewModel.matchDetail.observe(this) {
-            handleGetMatchDetail(it)
+        if (savedInstanceState == null) {
+            loadComments()
         }
+        registerVideoLink()
         viewModel.totalComment.observe(this) {
             handleTotalComment(it)
         }
@@ -123,15 +138,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             binding.formComment.commentCount.text = it.toString()
         }
         loginViewModel.loginDataState.observe(this) {
-            when (it) {
-                is DataState.Success -> {
-                    binding.formComment.userDTO = it.data
-                    viewModel.loadComment(CommentSpace.Match(mainViewModel.currentMatch!!))
-                }
-                else -> {
-
-                }
-            }
+            handleLogin(it)
         }
         binding.formComment.formComment.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus && loginViewModel.isNeedReLogin) {
@@ -140,29 +147,30 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             }
         }
 
-        binding.formComment.btnSend.setOnClickListener {
-            if (loginViewModel.isNeedReLogin) {
-                showLogin()
-                return@setOnClickListener
+        binding.formComment.btnSend.clicks().throttleFirst(300, TimeUnit.MILLISECONDS)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (loginViewModel.isNeedReLogin) {
+                    showLogin()
+                    return@subscribe
+                }
+                val text: String =
+                    binding.formComment.formComment.text?.toString() ?: return@subscribe
+                if (text.isNotEmpty()) {
+                    val comment = CommentDTO.wrap(text, binding.formComment.userDTO!!)
+                    sendComment(comment)
+                    adapterComment.onAddNewComment(comment)
+                    binding.formComment.formComment.setText("")
+                    binding.formComment.formComment.clearFocus()
+                    binding.recyclerViewComment.scrollToPosition(0)
+                }
             }
-            val text: String =
-                binding.formComment.formComment.text?.toString() ?: return@setOnClickListener
-            if (text.isNotEmpty()) {
-                val comment = CommentDTO.wrap(text, binding.formComment.userDTO!!)
-                viewModel.sendComment(comment, mainViewModel.currentMatch)
-                adapterComment.onAddNewComment(comment)
-                binding.formComment.formComment.setText("")
-                binding.formComment.formComment.clearFocus()
-                binding.recyclerViewComment.scrollToPosition(0)
-            }
-
-        }
         viewModel.sendComment.observe(this) {
             handleSendComment(it)
         }
 
         binding.formComment.btnReceiveComment.clicks()
-            .throttleFirst(3000, TimeUnit.MILLISECONDS)
+            .throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 requestRewardedAds("Nhận thêm bình luận")
@@ -171,8 +179,73 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             })
     }
 
-    private fun handleSendComment(dataState: DataState<CommentDTO>) {
+    private fun handleLogin(it: DataState<UserDTO>?) {
+        when (it) {
+            is DataState.Success -> {
+                binding.formComment.userDTO = it.data
+                loadComments()
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    private fun registerVideoLink() {
+        if (type == Type.LiveStream) {
+            highLightViewModel.highLightDetail.observe(this) {
+                handleGetHighLighDetail(it)
+            }
+        } else {
+            mainViewModel.matchDetail.observe(this) {
+                handleGetMatchDetail(it)
+            }
+        }
+    }
+
+    private fun handleGetHighLighDetail(dataState: DataState<HighLightDetail>) {
         when(dataState) {
+            is DataState.Loading -> {
+                listLinkSkeleton.run()
+            }
+
+            is DataState.Success -> {
+                listLinkSkeleton.hide {
+                    adapterListM3u8Link.onRefresh(dataState.data.linkStreamWithReferer)
+                }
+            }
+
+            is DataState.Error -> {
+
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    private fun sendComment(commentDTO: CommentDTO) {
+        if (type == Type.LiveStream) {
+            viewModel.sendComment(commentDTO, mainViewModel.currentMatch)
+        } else {
+            requireArguments().getParcelable<HighLightDTO>(EXTRA_HIGH_LIGHT)?.let {
+                viewModel.sendCommentHighLight(commentDTO, it)
+            }
+        }
+    }
+
+    private fun loadComments() {
+        if (type == Type.LiveStream) {
+            viewModel.loadComment(CommentSpace.Match(mainViewModel.currentMatch!!))
+        } else {
+            requireArguments().getParcelable<HighLightDTO>(EXTRA_HIGH_LIGHT)?.let {
+                viewModel.loadCommentHighLight(it)
+            }
+        }
+    }
+
+    private fun handleSendComment(dataState: DataState<CommentDTO>) {
+        when (dataState) {
             is DataState.Error -> {
                 requestRewardedAds("Hết lượt bình luận")
             }
@@ -188,8 +261,10 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
                 dialog.dismiss()
                 App.get().rewardedAdsManager.loadAds()
                     .subscribe {
-                        it.show(requireActivity()) {
-                            mainViewModel.increaseComment(it)
+                        activity?.let { it1 ->
+                            it.show(it1) {
+                                mainViewModel.increaseComment(it)
+                            }
                         }
                     }
             }
@@ -261,19 +336,24 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
         }
     }
 
-    override fun onDestroyView() {
-        binding.formComment.userDTO = null
-        binding.viewModel = null
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     companion object {
-        fun newInstance() {
-
+        private const val EXTRA_TYPE = "extra:type"
+        private const val EXTRA_HIGH_LIGHT = "extra:highlight"
+        fun newInstance(type: Type = Type.LiveStream, vararg extra: Any): FragmentBottomPlayerPortrait {
+            return FragmentBottomPlayerPortrait().apply {
+                this.arguments = bundleOf().apply {
+                    putInt(EXTRA_TYPE, type.value)
+                    extra.forEach {
+                        if (it is HighLightDTO) {
+                            putParcelable(EXTRA_HIGH_LIGHT, it)
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    enum class Type(val value: Int) {
+        LiveStream(0), HighLight(1)
     }
 }

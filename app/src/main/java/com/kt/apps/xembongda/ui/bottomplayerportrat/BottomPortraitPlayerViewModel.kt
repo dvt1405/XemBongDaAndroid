@@ -3,12 +3,12 @@ package com.kt.apps.xembongda.ui.bottomplayerportrat
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.ads.rewarded.RewardItem
 import com.kt.apps.xembongda.base.BaseViewModel
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.comments.CommentDTO
 import com.kt.apps.xembongda.model.comments.CommentSpace
+import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.ui.comment.BaseCommentFootballMatch
 import com.kt.apps.xembongda.usecase.authenticate.GetUserInfo
@@ -56,8 +56,34 @@ class BottomPortraitPlayerViewModel @Inject constructor(
                 }.subscribe({
                     _totalCommentLiveData.postValue(DataState.Success(it))
                 }, {
-                    Log.e("TAG", it.message, it)
                 })
+        )
+    }
+
+    fun loadCommentHighLight(highLightDTO: HighLightDTO) {
+        _totalCommentLiveData.postValue(DataState.Loading())
+        add(
+            repository.loadCommentFor(CommentSpace.HighLight())
+                .map { listComment ->
+                    listComment.map { commentDTO ->
+                        BaseCommentFootballMatch.fromDto(commentDTO)
+                    }
+                }.subscribe({
+                    _totalCommentLiveData.postValue(DataState.Success(it))
+                }, {
+                })
+        )
+    }
+
+
+    fun sendCommentHighLight(comment: CommentDTO, highLightDTO: HighLightDTO) {
+        _sendCommentLiveData.postValue(DataState.Loading())
+        add(
+            addComment(comment, highLightDTO).subscribe({
+                _sendCommentLiveData.postValue(DataState.Success(it))
+            }, {
+                _sendCommentLiveData.postValue(DataState.Error(it))
+            })
         )
     }
 
