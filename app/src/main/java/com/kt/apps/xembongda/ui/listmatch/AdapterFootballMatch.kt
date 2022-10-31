@@ -97,6 +97,13 @@ class AdapterFootballMatch :
         }
     }
 
+    override fun onRefresh(items: Array<out FootballMatch>, notifyDataChange: Boolean) {
+        App.get().adsLoaderManager.addObserver(this)
+        App.get().adsLoaderManager.preloadNativeAds()
+        clearAds()
+        super.onRefresh(items, notifyDataChange)
+    }
+
 
     override fun bindItem(item: FootballMatch, binding: ItemFootballMatchBinding) {
         binding.item = item
@@ -140,9 +147,10 @@ class AdapterFootballMatch :
         listAds.forEach {
             it.destroy()
         }
-        notifyItemInserted(_firstAdPosition)
-        notifyItemInserted(_secondPosition)
         listAds.clear()
+        notifyItemChanged(_firstAdPosition)
+        notifyItemChanged(_secondPosition)
+        App.get().adsLoaderManager.unregister(this)
     }
 
     override fun onReceiveAds(nativeAd: NativeAd) {
