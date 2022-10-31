@@ -3,19 +3,20 @@ package com.kt.apps.xembongda.ads
 import android.content.Context
 import android.util.Log
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.kt.apps.xembongda.R
-import com.kt.apps.xembongda.usecase.AsyncTransformer
+import com.kt.apps.xembongda.player.AudioFocusManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class RewardedAdsManager @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val audioFocusManager: AudioFocusManager
 ) {
     private val compositeDisposable by lazy {
         CompositeDisposable()
@@ -71,15 +72,18 @@ class RewardedAdsManager @Inject constructor(
                 adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.e("TAG", adError.message)
                         adError.responseInfo?.responseId?.let { it1 -> Log.e("TAG", it1) }
-                        Log.e("TAG", adError.domain)
                         it.onError(Throwable())
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
-                        Log.e("TAG", "onAdLoaded")
-
+                        rewardedAd.fullScreenContentCallback =
+                            object : FullScreenContentCallback() {
+                                override fun onAdDismissedFullScreenContent() {
+                                    super.onAdDismissedFullScreenContent()
+                                    audioFocusManager.requestFocus()
+                                }
+                            }
                         it.onNext(rewardedAd)
                     }
                 })
