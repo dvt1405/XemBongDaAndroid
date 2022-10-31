@@ -18,6 +18,8 @@ sealed class CommentSpace {
 
     object Group : CommentSpace()
 
+    class HighLight : CommentSpace()
+
     data class Match(val footballMatch: FootballMatch) : CommentSpace()
 
 }

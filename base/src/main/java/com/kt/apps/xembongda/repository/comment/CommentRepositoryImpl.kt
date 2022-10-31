@@ -18,7 +18,6 @@ import com.kt.apps.xembongda.storage.IKeyValueStorage
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @BaseScope
 class CommentRepositoryImpl @Inject constructor(
@@ -60,6 +59,7 @@ class CommentRepositoryImpl @Inject constructor(
         return Observable.create { emitter ->
             currentMatchCommentId = when (commentSpace) {
                 is CommentSpace.Match -> commentSpace.footballMatch.getMatchIdForComment()
+                is CommentSpace.HighLight -> "highLightsRoom"
                 else -> {
                     "total"
                 }
@@ -104,10 +104,19 @@ class CommentRepositoryImpl @Inject constructor(
             return Observable.error(Throwable("Bạn đã vượt quá số lượt bình luận"))
         }
         return Observable.create { emitter ->
+            val data = mapOf("${comment.uID}_${comment.systemTime}" to comment.gzipToStr())
             when (space) {
                 is CommentSpace.Match -> {
                     val match = space.footballMatch
-                    commentToMatch(comment, match, emitter)
+                    val id = match.getMatchIdForComment()
+                    commentToSpace(comment, id, data, emitter)
+                }
+                is CommentSpace.HighLight -> {
+                    commentToSpace(
+                        comment, "highLightsRoom",
+                        data,
+                        emitter
+                    )
                 }
                 else -> {
 
@@ -116,14 +125,15 @@ class CommentRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun commentToMatch(
+    private fun commentToSpace(
         commentDTO: CommentDTO,
-        match: FootballMatch,
+        id: String,
+        data: Map<String, Any>,
         emitter: ObservableEmitter<CommentDTO>
     ) {
         decreaseComment()
-        commentsDataBase.document(match.getMatchIdForComment())
-            .update(mapOf("${commentDTO.uID}_${commentDTO.systemTime}" to commentDTO.gzipToStr()))
+        commentsDataBase.document(id)
+            .update(data)
             .addOnSuccessListener {
                 emitter.onNext(commentDTO)
                 emitter.onComplete()
@@ -131,20 +141,25 @@ class CommentRepositoryImpl @Inject constructor(
             .addOnCanceledListener {}
             .addOnFailureListener {
                 if (it is FirebaseFirestoreException) {
-                    onFirstCommentForMatch(it, match, commentDTO, emitter)
+                    onFirstCommentForSpace(
+                        it, id, commentDTO,
+                        data,
+                        emitter
+                    )
                 }
             }
     }
 
-    private fun onFirstCommentForMatch(
+    private fun onFirstCommentForSpace(
         exception: FirebaseFirestoreException,
-        match: FootballMatch,
+        id: String,
         commentDTO: CommentDTO,
+        data: Map<String, Any>,
         emitter: ObservableEmitter<CommentDTO>
     ) {
         if (exception.code == FirebaseFirestoreException.Code.NOT_FOUND) {
-            commentsDataBase.document(match.getMatchIdForComment())
-                .set(mapOf("${commentDTO.uID}_${commentDTO.systemTime}" to commentDTO.gzipToStr()))
+            commentsDataBase.document(id)
+                .set(data)
                 .addOnSuccessListener {
                     emitter.onNext(commentDTO)
                     emitter.onComplete()
