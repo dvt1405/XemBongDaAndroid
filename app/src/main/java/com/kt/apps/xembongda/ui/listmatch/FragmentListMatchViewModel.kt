@@ -1,9 +1,7 @@
 package com.kt.apps.xembongda.ui.listmatch
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import com.kt.apps.xembongda.base.BaseViewModel
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatch

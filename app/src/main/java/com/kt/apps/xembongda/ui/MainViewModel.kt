@@ -1,14 +1,7 @@
 package com.kt.apps.xembongda.ui
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.google.android.gms.ads.rewarded.RewardItem
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.gson.Gson
 import com.kt.apps.xembongda.base.BaseViewModel
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatch
@@ -64,7 +57,6 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
     val isLoading: MediatorLiveData<Boolean> by lazy { MediatorLiveData() }
 
     init {
-        Log.e("TAG", "Init")
         isLoading.addSource(listMatch) {
             isLoading.postValue(it is DataState.Loading)
         }
@@ -76,7 +68,6 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
         add(
             interactors.getListFootballMatch(sourceFrom)
                 .subscribe({
-                    Log.e("TAG", Gson().toJson(it))
                     _listMatch.postValue(DataState.Success(it))
                 }, {
                     _listMatch.postValue(DataState.Error(it))
@@ -89,10 +80,8 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
         add(
             interactors.getListFootballMatch(sourceFrom, html)
                 .subscribe({
-                    Log.e("TAG", Gson().toJson(it))
                     _listMatch.postValue(DataState.Success(it))
                 }, {
-                    Log.e("TAG", it.localizedMessage, it)
                     _listMatch.postValue(DataState.Error(it))
                 })
         )
