@@ -5,6 +5,7 @@ import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.di.main.MainModule
 import com.kt.apps.xembongda.di.player.ActivityPlayerModule
 import com.kt.apps.xembongda.di.viewmodels.ViewModelModule
+import com.kt.apps.xembongda.di.webview.WebViewModule
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import dagger.BindsInstance
@@ -21,7 +22,8 @@ import dagger.android.support.AndroidSupportInjectionModule
         AndroidSupportInjectionModule::class,
         ViewModelModule::class,
         PlayerModule::class,
-        ActivityPlayerModule::class
+        ActivityPlayerModule::class,
+        WebViewModule::class
     ]
 )
 @AppScope
