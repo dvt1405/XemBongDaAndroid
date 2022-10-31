@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
+import com.kt.apps.xembongda.ads.AdsInterstitialManager
 import com.kt.apps.xembongda.base.BaseFragment
 import com.kt.apps.xembongda.databinding.FragmentListMatchBinding
 import com.kt.apps.xembongda.model.DataState
@@ -20,6 +21,7 @@ import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.webview.WebView
 import com.kt.apps.xembongda.utils.gone
+import com.kt.apps.xembongda.utils.showErrorDialog
 import com.kt.apps.xembongda.utils.visible
 import com.kt.skeleton.CustomItemDivider
 import com.kt.skeleton.KunSkeleton
@@ -29,6 +31,9 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var adsInterstitialManager: AdsInterstitialManager
 
     private val viewModel by lazy {
         ViewModelProvider(
@@ -42,7 +47,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
     }
 
     private val adapter by lazy {
-        if (sourceFrom == FootballRepoSourceFrom.MiTom) {
+        if (sourceFrom == FootballRepoSourceFrom.BinhLuan91) {
             AdapterFootballMatch()
         } else {
             AdapterFootballMatch()
@@ -80,7 +85,6 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
                 LinearLayoutManager.VERTICAL
             )
         )
-//        backupUseWebview()
     }
 
     private var currentMatch: FootballMatch? = null
@@ -225,6 +229,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
             handleListMatch(it)
         }
         adapter.onItemRecyclerViewCLickListener = { item, position ->
+            adsInterstitialManager.loadAds(requireActivity())
             currentMatch = item
             adapter.pauseAds()
             isLoadingWebView = false
@@ -251,15 +256,21 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
 
             }
             is DataState.Error -> {
-                binding.webView.visible()
-                if (sourceFrom == FootballRepoSourceFrom.MiTom) {
-                    loadFromWebView()
-                }
+                showErrorDialog(content = "Thử tải lại trang để cập nhật link mới nhất")
+                binding.swipeRefreshLayout.isEnabled = true
+                binding.swipeRefreshLayout.isRefreshing = false
             }
             else -> {
                 binding.swipeRefreshLayout.isEnabled = true
             }
         }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        App.get().adsLoaderManager.unregister(adapter)
+        adapter.clearAds()
+        binding.recyclerView.adapter = null
     }
 
     override fun onDestroy() {
