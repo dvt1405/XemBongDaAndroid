@@ -13,22 +13,23 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.transition.Scene
-import androidx.transition.Transition
-import androidx.transition.TransitionInflater
-import androidx.transition.TransitionListenerAdapter
-import androidx.transition.TransitionManager
+import androidx.transition.*
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.kt.apps.xembongda.api.BinhLuan90PhutApi
 import com.kt.apps.xembongda.base.BaseActivity
 import com.kt.apps.xembongda.databinding.ActivityMainBinding
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
+import com.kt.apps.xembongda.model.highlights.HighLightDTO
+import com.kt.apps.xembongda.model.highlights.HighLightDetail
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.PlayerActivity
 import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.dashboard.FragmentDashboard
+import com.kt.apps.xembongda.ui.highlight.FragmentHighlightViewModel
 import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.visible
 import javax.inject.Inject
@@ -42,8 +43,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @Inject
     lateinit var exoPlayerManager: ExoPlayerManager
 
+    @Inject
+    lateinit var api: BinhLuan90PhutApi
+
     private val viewModel by lazy {
         ViewModelProvider(this, factory)[MainViewModel::class.java]
+    }
+
+    private val highLightViewModel by lazy {
+        ViewModelProvider(this, factory)[FragmentHighlightViewModel::class.java]
     }
 
     private val sceneRoot by lazy {
@@ -104,6 +112,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun initAction(savedInstanceState: Bundle?) {
         viewModel.matchDetail.observe(this, handelGetMatchDetail())
+        highLightViewModel.highLightDetail.observe(this, handleHighLightDetail())
         viewModel.loadCommentNum()
         exoPlayerManager.onCloseExoPlayer = {
             onBackPressed()
@@ -113,6 +122,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
         binding.landScapeLayout.setOnClickListener {
 
+        }
+    }
+
+    private fun handleHighLightDetail() = Observer<DataState<HighLightDetail>> {
+        when(it) {
+            is DataState.Loading -> {
+                exoPlayerManager.pause()
+                highLightViewModel.selectedHighLight?.let { it1 -> go(scene2, transition, it1) }
+            }
+            is DataState.Success -> {
+                exoPlayerManager.playVideo(it.data.linkStreamWithReferer)
+            }
+            else -> {
+
+            }
         }
     }
 
@@ -231,7 +255,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
     }
 
-    fun go(scene: Scene, transition: Transition = this.transition) {
+    fun go(scene: Scene, transition: Transition = this.transition, vararg params: Any) {
         if (currentScene == scene) return
         TransitionManager.go(scene, transition).also {
             currentScene = scene
@@ -254,9 +278,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 220,
                 false
             )
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.bottom, FragmentBottomPlayerPortrait())
-                .commit()
+            showBottomFragment(params)
         } else if (scene == scene3) {
             exoPlayerManager.setupController(
                 this,
@@ -297,6 +319,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         targetColor?.let {
             animateAppAndStatusBar(window.statusBarColor, it)
         }
+    }
+
+    private fun showBottomFragment(params: Array<out Any>) {
+        val f = if (params.isNotEmpty() && params.filterIsInstance<HighLightDTO>().isNotEmpty()) {
+            val item = params.filterIsInstance<HighLightDTO>().last()
+            FragmentBottomPlayerPortrait.newInstance(
+                FragmentBottomPlayerPortrait.Type.HighLight,
+                item
+            )
+        } else {
+            FragmentBottomPlayerPortrait.newInstance()
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.bottom, f)
+            .commit()
     }
 
 
