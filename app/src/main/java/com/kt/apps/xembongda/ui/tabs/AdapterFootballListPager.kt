@@ -8,6 +8,9 @@ import com.kt.apps.xembongda.ui.listmatch.FragmentListMatch
 class AdapterFootballListPager(private val fragment: Fragment) : FragmentStateAdapter(fragment) {
     private val items by lazy {
         FootballRepoSourceFrom.values()
+            .filter {
+                it != FootballRepoSourceFrom.MiTom
+            }
     }
     override fun getItemCount(): Int = items.size
 
