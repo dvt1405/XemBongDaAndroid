@@ -10,12 +10,13 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.ShapeDrawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.roundToInt
 
 open class CustomItemDivider(
     val context: Context,
-    val orientation: Int,
+    val orientation: Int = LinearLayoutManager.VERTICAL,
     private val margin: Float = 0f,
     private val useDefault: Boolean = false,
     private val customColor: Int = Color.parseColor("#20FFFFFF")
