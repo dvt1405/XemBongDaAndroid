@@ -2,11 +2,13 @@ package com.kt.apps.xembongda.di
 
 import android.content.Context
 import com.kt.apps.xembongda.App
+import com.kt.apps.xembongda.di.config.HighLightConfig
 import com.kt.apps.xembongda.di.main.MainModule
 import com.kt.apps.xembongda.di.player.ActivityPlayerModule
 import com.kt.apps.xembongda.di.viewmodels.ViewModelModule
 import com.kt.apps.xembongda.di.webview.WebViewModule
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
+import com.kt.apps.xembongda.repository.IHighLightRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import dagger.BindsInstance
 import dagger.Component
@@ -29,6 +31,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 @AppScope
 interface AppComponents : AndroidInjector<App> {
     fun map(): Map<FootballRepoSourceFrom, IFootballMatchRepository>
+    fun iHighLightRepo(): Map<HighLightConfig.Source, @JvmSuppressWildcards IHighLightRepository>
 
     @Component.Factory
     interface Factory {

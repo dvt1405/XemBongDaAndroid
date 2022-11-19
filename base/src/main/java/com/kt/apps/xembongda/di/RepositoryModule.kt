@@ -1,5 +1,6 @@
 package com.kt.apps.xembongda.di
 
+import android.annotation.SuppressLint
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.kt.apps.xembongda.api.BinhLuan90PhutApi
@@ -18,8 +19,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import javax.inject.Named
 import javax.inject.Qualifier
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.X509TrustManager
 
 @Module
 class RepositoryModule {
@@ -197,11 +204,72 @@ class RepositoryModule {
     @Provides
     @BaseScope
     fun providesOkHttpClient(): OkHttpClient {
+        var context: SSLContext? = null
+        try {
+            HttpsURLConnection.setDefaultHostnameVerifier { name, password ->
+                return@setDefaultHostnameVerifier true
+            }
+            context = SSLContext.getInstance("TLS")
+            context.init(
+                null, arrayOf<X509TrustManager>(@SuppressLint("CustomX509TrustManager")
+                object : X509TrustManager {
+                    @SuppressLint("TrustAllX509TrustManager")
+                    @Throws(CertificateException::class)
+                    override fun checkClientTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    @SuppressLint("TrustAllX509TrustManager")
+                    @Throws(CertificateException::class)
+                    override fun checkServerTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate?> {
+                        return arrayOfNulls(0)
+                    }
+                }), SecureRandom()
+            )
+            HttpsURLConnection.setDefaultSSLSocketFactory(
+                context.socketFactory
+            )
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 this.level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.NONE
             })
+            .apply {
+                context?.let {
+                    this.sslSocketFactory(it.socketFactory, object : X509TrustManager {
+                        @SuppressLint("TrustAllX509TrustManager")
+                        @Throws(CertificateException::class)
+                        override fun checkClientTrusted(
+                            chain: Array<X509Certificate?>?,
+                            authType: String?
+                        ) {
+                        }
+
+                        @SuppressLint("TrustAllX509TrustManager")
+                        @Throws(CertificateException::class)
+                        override fun checkServerTrusted(
+                            chain: Array<X509Certificate?>?,
+                            authType: String?
+                        ) {
+                        }
+
+                        override fun getAcceptedIssuers(): Array<X509Certificate?> {
+                            return arrayOfNulls(0)
+                        }
+                    })
+                }
+            }
             .build()
     }
 

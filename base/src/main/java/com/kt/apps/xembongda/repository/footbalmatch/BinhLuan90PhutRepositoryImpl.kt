@@ -11,6 +11,7 @@ import com.kt.apps.xembongda.model.football.BinhLuanFootballMatchModelItem
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
+import com.kt.apps.xembongda.utils.trustEveryone
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
@@ -24,6 +25,7 @@ class BinhLuan90PhutRepositoryImpl @Inject constructor(
     }
 
     override fun getAllMatches(): Observable<List<FootballMatch>> {
+        trustEveryone()
         return api.getAllMatchFrom90Phut()
             .map { list ->
                 val totalItems = mutableListOf<BinhLuanFootballMatchModelItem.Data>()

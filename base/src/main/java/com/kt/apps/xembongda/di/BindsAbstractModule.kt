@@ -1,8 +1,10 @@
 package com.kt.apps.xembongda.di
 
+import com.kt.apps.xembongda.di.config.HighLightConfig
 import com.kt.apps.xembongda.repository.IAuthenticateRepository
 import com.kt.apps.xembongda.repository.ICommentRepository
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
+import com.kt.apps.xembongda.repository.IHighLightRepository
 import com.kt.apps.xembongda.repository.auth.AuthenticateRepositoryImpl
 import com.kt.apps.xembongda.repository.comment.CommentRepositoryImpl
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
@@ -10,18 +12,20 @@ import com.kt.apps.xembongda.storage.IKeyValueStorage
 import com.kt.apps.xembongda.storage.KeyValueStorageImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.multibindings.Multibinds
 
 
 @Module
-abstract class StorageModule {
+abstract class BindsAbstractModule {
 
     @Binds
     abstract fun keyValueStorage(instance: KeyValueStorageImpl): IKeyValueStorage
 
     @Multibinds
-    abstract fun iFootballMatchRepositoryMap(): Map<FootballRepoSourceFrom, IFootballMatchRepository>
+    abstract fun iFootballMatchRepositoryMap(): Map<FootballRepoSourceFrom, @JvmSuppressWildcards IFootballMatchRepository>
+
+    @Multibinds
+    abstract fun iFootballMatchHighLightMap(): Map<HighLightConfig.Source, @JvmSuppressWildcards IHighLightRepository>
 
     @Binds
     abstract fun provideAuthenticateRepository(repoImpl: AuthenticateRepositoryImpl): IAuthenticateRepository

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.exceptions.FootballMatchThrowable
+import com.kt.apps.xembongda.exceptions.mapToMyException
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.FootballTeam
@@ -15,6 +16,7 @@ import com.kt.apps.xembongda.storage.IKeyValueStorage
 import com.kt.apps.xembongda.utils.jsoupParse
 import com.kt.apps.xembongda.utils.trustEveryone
 import io.reactivex.rxjava3.core.Observable
+import org.jsoup.Connection.Response
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.regex.Matcher
@@ -49,8 +51,13 @@ class Football91Repository @Inject constructor(
         trustEveryone()
         return Observable.create { emitter ->
             val listFootballMatch = mutableListOf<FootballMatch>()
-            val response = jsoupParse(config.url, cookie)
-            cookie.putAll(response.cookie)
+            val response = try {
+                jsoupParse(config.url, cookie)
+            } catch (e: Exception) {
+                emitter.onError(e.mapToMyException())
+                return@create
+            }
+            cookie.putAll(response!!.cookie)
             val allMatches = response.body.getElementsByClass(itemClassName)
 
             for (match in allMatches) {
