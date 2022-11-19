@@ -1,6 +1,8 @@
 package com.kt.apps.xembongda.utils
 
+import android.util.Log
 import com.kt.apps.xembongda.Constants
+import com.kt.apps.xembongda.base.BuildConfig
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -17,6 +19,7 @@ fun jsoupConnect(
     vararg header: Pair<String, String>
 ): Connection {
     return Jsoup.connect(url)
+        .followRedirects(true)
         .header("User-agent", Constants.USER_AGENT)
         .apply {
             header.forEach {
@@ -31,7 +34,20 @@ fun jsoupParse(
     cookie: Map<String, String>,
     vararg header: Pair<String, String>
 ): JsoupResponse {
-    val connection = jsoupConnect(url, cookie, *header).execute()
+    if (BuildConfig.DEBUG) {
+        Log.d("Jsoup", url)
+    }
+    val connection = jsoupConnect(url, cookie, *header)
+        .timeout(10_000)
+        .followRedirects(true)
+        .execute()
+
+    if (BuildConfig.DEBUG) {
+        Log.d("Jsoup", url)
+        Log.d("Jsoup", "${connection.statusCode()}")
+        Log.d("Jsoup", connection.statusMessage())
+    }
+
     val body = connection.parse().body()
     return JsoupResponse(
         body,

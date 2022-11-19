@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:kt="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="liveScore"
+            type="com.kt.apps.xembongda.model.LiveScoreDTO.Match" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/common_padding"
+        tools:background="@color/item_gray_light">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avatarHomeTeam"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="@dimen/common_padding"
+            app:layout_constraintEnd_toEndOf="@id/homeName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stage"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlayAppCornerSize50Percent"
+            kt:bindImageUrl="@{liveScore.homeTea.logo}" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/homeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:paddingEnd="@dimen/common_padding"
+            android:text="@{liveScore.homeTea.name}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_details_medium_13sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/awayName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatarHomeTeam"
+            tools:text="@string/test" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/avatarAwayTeam"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="@dimen/common_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/homeName"
+            app:layout_constraintTop_toTopOf="@+id/avatarHomeTeam"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlayAppCornerSize50Percent"
+            kt:bindImageUrl="@{liveScore.awayTeam.logo}" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/awayName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="@dimen/common_padding"
+            android:text="@{liveScore.awayTeam.name}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_details_medium_13sp"
+
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/homeName"
+            app:layout_constraintTop_toTopOf="@+id/homeName"
+            tools:text="@string/test" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/stage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingHorizontal="@dimen/common_padding"
+            android:singleLine="true"
+            android:text="@{liveScore.matchStadium}"
+
+            android:textColor="@color/textColorWhiteDim"
+            android:textSize="@dimen/text_size_details_medium_13sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            kt:visible="@{liveScore.matchStadium != null &amp;&amp; liveScore.matchStadium.trim().length() > 0}"
+            tools:text="@string/test" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/common_padding"
+            android:text="@{liveScore.score}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarHomeTeam"
+            app:layout_constraintEnd_toStartOf="@id/avatarAwayTeam"
+            app:layout_constraintStart_toEndOf="@id/avatarHomeTeam"
+            app:layout_constraintTop_toTopOf="@+id/avatarHomeTeam"
+            tools:text="@string/test" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{liveScore.time}"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@+id/score"
+            tools:text="@string/test" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -19,5 +19,7 @@
     <color name="statusBarColor">@color/backgroundColor</color>
     <color name="itemBackgroundColor">@color/item_gray_selected</color>
     <color name="startGradientIconColorHighlight">#2BE4FF</color>
-
+    <color name="cell_background_color">#4A4949</color>
+    <color name="header_line_color">#F44336</color>
+    <color name="table_view_default_text_color">@color/white</color>
 </resources>

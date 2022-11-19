@@ -1,6 +1,8 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
+import android.util.Log
 import com.google.gson.Gson
+import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.exceptions.FootballMatchThrowable
 import com.kt.apps.xembongda.model.FootballMatch
@@ -26,6 +28,7 @@ class XoiLac10Repository @Inject constructor(
     private val keyValueStorage: IKeyValueStorage
 ) : IFootballMatchRepository {
     companion object {
+        private val TAG = XoiLac10Repository::class.java.simpleName
         private const val EXTRA_COOKIE_NAME = "extra:cookie_xoilac10"
     }
 
@@ -47,6 +50,10 @@ class XoiLac10Repository @Inject constructor(
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         trustEveryone()
         return Observable.create { emitter ->
+            Log.e("TAG", "SDsdfsdfdsfsdfdsfdsf")
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, config.url)
+            }
             val listFootballMatch = mutableListOf<FootballMatch>()
             val response = jsoupParse(config.url, cookie)
             cookie.putAll(response.cookie)
@@ -55,7 +62,10 @@ class XoiLac10Repository @Inject constructor(
                 try {
                     val matchDetail = mapHtmlElementToFootballMatch(match)
                     listFootballMatch.add(matchDetail)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, e.message, e)
+                    }
                 }
             }
             if (listFootballMatch.isEmpty()) {
@@ -69,6 +79,9 @@ class XoiLac10Repository @Inject constructor(
     }
 
     private fun mapHtmlElementToFootballMatch(match: Element): FootballMatch {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, match.html())
+        }
         val matchId = match.attributes().get("data-fid")
         val kickOffTime = match.attributes().get("data-runtime")
         val kickOffDay = match.attributes().get("data-day")

@@ -27,6 +27,9 @@ class VeBoRepositoryImpl @Inject constructor(
 
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         return Observable.merge(api.getAllMatchFrom90Phut(), detail.getAllOtherFrom90Phut())
+            .doOnError {
+                throw it
+            }
             .map {
                 it.data.map {  data ->
                     FootballMatch(
