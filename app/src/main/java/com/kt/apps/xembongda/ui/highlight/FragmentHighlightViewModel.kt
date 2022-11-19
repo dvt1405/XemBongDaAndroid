@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kt.apps.xembongda.base.BaseViewModel
+import com.kt.apps.xembongda.di.config.HighLightConfig
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.model.highlights.HighLightDetail
@@ -42,7 +43,7 @@ class FragmentHighlightViewModel @Inject constructor(
         if (_highLightLiveData.value is DataState.Loading) return
         _highLightLiveData.postValue(DataState.Loading())
         add(
-            interactors.getALlHighlight(page)
+            interactors.getALlHighlight(page, HighLightConfig.Source.HooFoot)
                 .map { list ->
                     list.map {
                         ItemHighLights.DTO(it)
@@ -84,7 +85,7 @@ class FragmentHighlightViewModel @Inject constructor(
         selectedHighLight = highLightDTO
         _highlightDetail.postValue(DataState.Loading())
         add(
-            interactors.getHighLightDetail(highLightDTO)
+            interactors.getHighLightDetail(highLightDTO, highLightDTO.sourceFrom)
                 .subscribe({
                     _highlightDetail.postValue(DataState.Success(it))
                 }, {

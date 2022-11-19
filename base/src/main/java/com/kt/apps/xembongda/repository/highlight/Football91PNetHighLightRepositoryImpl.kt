@@ -1,12 +1,10 @@
 package com.kt.apps.xembongda.repository.highlight
 
 import android.util.Log
-import com.google.gson.Gson
 import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.di.config.HighLightConfig
 import com.kt.apps.xembongda.model.League
-import com.kt.apps.xembongda.model.LinkStreamWithReferer
 import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.model.highlights.HighLightDetail
 import com.kt.apps.xembongda.repository.IHighLightRepository
@@ -15,17 +13,16 @@ import com.kt.apps.xembongda.storage.IKeyValueStorage
 import com.kt.apps.xembongda.utils.jsoupParse
 import io.reactivex.rxjava3.core.Observable
 import org.jsoup.nodes.Element
-import java.util.regex.Pattern
 import javax.inject.Inject
 
-class XoiLacHighLightRepositoryImpl @Inject constructor(
-    @RepositoryModule.SourceXoiLac10Config
-    private val config: FootballRepositoryConfig,
-    private val keyValueStorage: IKeyValueStorage
+class Football91PNetHighLightRepositoryImpl @Inject constructor(
+    @RepositoryModule.SourceBinhLuan90Config
+    val config: FootballRepositoryConfig,
+    val keyValueStorage: IKeyValueStorage
 ) : IHighLightRepository {
     companion object {
         private val TAG = XoiLacHighLightRepositoryImpl::class.java.simpleName
-        private const val EXTRA_COOKIE_NAME = "extra:cookie_mitom"
+        private const val EXTRA_COOKIE_NAME = "extra:cookie_91p_highlight"
     }
 
     private val cacheList by lazy {
@@ -45,6 +42,7 @@ class XoiLacHighLightRepositoryImpl @Inject constructor(
         ).toMutableMap()
     }
 
+
     override fun getHighlights(page: Int, league: League): Observable<List<HighLightDTO>> {
         TODO("Not yet implemented")
     }
@@ -56,11 +54,11 @@ class XoiLacHighLightRepositoryImpl @Inject constructor(
             } else {
                 cachePage = maxOf(cachePage, page)
                 val oldIndex = cacheList.size
-                val jsoup = jsoupParse("${config.url}xem-lai-bong-da/page/$page", cookie)
+                val jsoup = jsoupParse("${config.url}highlight/$page", cookie)
                 cookie.putAll(jsoup.cookie)
                 keyValueStorage.save(EXTRA_COOKIE_NAME, cookie)
                 val body = jsoup.body
-                val items = body.getElementsByClass("post-item col-lg-3 col-12 mb-4")
+                val items = body.getElementsByClass("grid-matches__item col-6")
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, body.html())
                 }
@@ -76,15 +74,14 @@ class XoiLacHighLightRepositoryImpl @Inject constructor(
 
     private fun mapToHighLightItems(item: Element): HighLightDTO? {
         return try {
-            val thumbnail = item.getElementsByClass("post-thumbnail col-5 col-lg-12 p-0")[0]
-                .getElementsByTag("a")[0]
+            val thumbnail = item.getElementsByTag("a")[0]
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, thumbnail.html())
             }
             val href = thumbnail.attr("href")
             val logo = thumbnail.getElementsByTag("img")[0].attr("src")
-            val titleElement = item.getElementsByClass("post-title col-7 col-lg-12 p-3")[0]
-            val title = titleElement.getElementsByTag("a")[0].text()
+            val titleElement = item.getElementsByClass("grid-matc__footer")[0]
+            val title = titleElement.getElementsByClass("team")[0].text()
             var home = title
             var away = title
             try {
@@ -109,42 +106,16 @@ class XoiLacHighLightRepositoryImpl @Inject constructor(
                 time = title,
                 title,
                 href,
-                sourceFrom = HighLightConfig.Source.Mitom10
+                sourceFrom = HighLightConfig.Source.Phut91
+
             )
         } catch (e: Exception) {
             Log.e("TAG", e.message, e)
             null
         }
-
     }
 
     override fun getHighLightDetail(highLight: HighLightDTO): Observable<HighLightDetail> {
-        return Observable.create {
-            val response = jsoupParse(highLight.detailPage, cookie)
-            this.cookie.putAll(response.cookie)
-            val pattern = Pattern.compile("(?<=file:\\s\').*?(?=\')")
-            val rs = response.body
-            val listLink = mutableListOf<LinkStreamWithReferer>()
-            rs.getElementsByTag("script")
-                .forEach {
-                    try {
-                        val html = it.html()
-                        if (html.contains(".m3u8")) {
-                            val matcher = pattern.matcher(html)
-                            while (matcher.find()) {
-                                val link = matcher.group(0) ?: continue
-                                listLink.add(LinkStreamWithReferer(link, highLight.detailPage))
-                            }
-                        }
-                    } catch (_: Exception) {
-                    }
-                }
-            Log.e("TAG", Gson().toJson(listLink))
-            if (listLink.isEmpty()) {
-                it.onError(Throwable(""))
-            } else {
-                it.onNext(HighLightDetail(highLight, listLink))
-            }
-        }
+        TODO("Not yet implemented")
     }
 }
