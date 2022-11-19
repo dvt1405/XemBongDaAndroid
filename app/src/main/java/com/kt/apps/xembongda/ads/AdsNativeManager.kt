@@ -5,6 +5,7 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.kt.apps.xembongda.R
+import com.kt.apps.xembongda.base.BuildConfig
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -61,9 +62,17 @@ class AdsNativeManager @Inject constructor(context: Context) {
         }
     }
 
+    private val adUnits by lazy {
+        if(BuildConfig.DEBUG) {
+           "ca-app-pub-3940256099942544/2247696110"
+        } else {
+            context.getString(R.string.ad_mod_native_id)
+        }
+    }
+
 
     private val addLoader by lazy {
-        AdLoader.Builder(context, context.getString(R.string.ad_mod_native_id))
+        AdLoader.Builder(context, adUnits)
             .forNativeAd(nativeAdListener)
             .withNativeAdOptions(nativeOptions)
             .withAdListener(nativeAdsListener)

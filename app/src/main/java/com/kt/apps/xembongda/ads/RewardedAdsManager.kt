@@ -8,6 +8,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.kt.apps.xembongda.R
+import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.player.AudioFocusManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -64,11 +65,19 @@ class RewardedAdsManager @Inject constructor(
         )
     }
 
-    fun loadAds(adUnits: String = context.getString(R.string.ad_mod_comment_rewarded)) =
+    private val adUnits by lazy {
+        if (BuildConfig.DEBUG) {
+            "ca-app-pub-3940256099942544/5224354917"
+        } else {
+            context.getString(R.string.ad_mod_comment_rewarded)
+        }
+    }
+
+    fun loadAds(adUnits: String = this.adUnits) =
         Observable.create {
             RewardedAd.load(
                 context,
-                context.getString(R.string.ad_mod_comment_rewarded),
+                adUnits,
                 adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {

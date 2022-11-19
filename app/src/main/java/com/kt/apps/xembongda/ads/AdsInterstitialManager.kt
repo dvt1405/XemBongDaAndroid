@@ -8,6 +8,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.kt.apps.xembongda.R
+import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.storage.IKeyValueStorage
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class AdsInterstitialManager @Inject constructor(
     private val iKeyValueStorage: IKeyValueStorage
 ) {
     private val adUnit: String
-        get() = context.getString(R.string.ad_mod_intertitial_id)
+        get() = if (BuildConfig.DEBUG) "ca-app-pub-3940256099942544/1033173712" else context.getString(R.string.ad_mod_intertitial_id)
 
     private var ads: InterstitialAd? = null
     private var lastTimeShowAds: Long
