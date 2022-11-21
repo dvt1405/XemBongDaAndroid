@@ -31,6 +31,7 @@ interface BaseComponents {
     fun iKeyValueStorage(): IKeyValueStorage
     fun iHighLightRepo(): Map<HighLightConfig.Source, @JvmSuppressWildcards IHighLightRepository>
     fun iLiveScores(): ILiveScoresRepository
+    fun iRankingRepo(): IRankingRepository
 
 
     @Component.Builder

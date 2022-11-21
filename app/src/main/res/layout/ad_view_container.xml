@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/common_padding_32dp"
+            app:adSize="SMART_BANNER"
+            app:adUnitId="@string/ad_mod_banner_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnCloseAds" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCloseAds"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="24dp"
+            android:visibility="gone"
+            android:layout_height="24dp"
+            android:background="@color/white_transparent"
+            android:insetLeft="@dimen/padding_0dp"
+            android:insetTop="@dimen/padding_0dp"
+            android:insetRight="@dimen/padding_0dp"
+            android:insetBottom="@dimen/padding_0dp"
+            android:theme="@style/Theme.AppCompat"
+            app:icon="@drawable/ic_round_close_24"
+            app:iconGravity="textEnd"
+            app:iconTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

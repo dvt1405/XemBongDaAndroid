@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:background="@color/item_gray_selected"
             app:backgroundTint="@color/item_gray_light"
             app:layout_anchor="@id/bottomAppbar"
@@ -46,7 +47,7 @@
                 android:outlineAmbientShadowColor="@color/white_transparent"
                 android:outlineSpotShadowColor="@color/white_transparent"
                 app:backgroundTint="@color/white_transparent"
-                app:itemIconTint="@color/white"
+                app:itemIconTint="@color/item_gray_light"
                 app:itemTextColor="@color/white"
                 app:labelVisibilityMode="labeled"
                 app:menu="@menu/menu_bottom_navigation" />

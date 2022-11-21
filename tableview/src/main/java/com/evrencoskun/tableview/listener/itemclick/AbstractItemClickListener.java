@@ -88,7 +88,7 @@ public abstract class AbstractItemClickListener implements RecyclerView.OnItemTo
                 // Check distance to prevent scroll to trigger the event
                 if (start != null && Math.abs(start.getRawX() - e.getRawX()) < 20 && Math.abs
                         (start.getRawY() - e.getRawY()) < 20) {
-                    longPressAction(e);
+//                    longPressAction(e);
                 }
             }
         });

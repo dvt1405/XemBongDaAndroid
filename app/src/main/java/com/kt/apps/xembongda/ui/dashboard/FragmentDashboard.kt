@@ -1,5 +1,7 @@
 package com.kt.apps.xembongda.ui.dashboard
 
+import android.animation.Animator.AnimatorListener
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.animation.AnimationUtils
@@ -53,7 +55,7 @@ class FragmentDashboard : BaseFragment<FragmentDashboardBinding>() {
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 0 || position == 1) {
+                if (position == 0 || position == 2) {
                     mainActivityViewModel.loadEuroData()
                 }
             }
@@ -72,10 +74,10 @@ class FragmentDashboard : BaseFragment<FragmentDashboardBinding>() {
     companion object {
         private val mapMenuId by lazy {
             mapOf(
-                R.id.liveScore to 0,
-//                R.id.copa to 1,
+                R.id.liveScore to 2,
+                R.id.euro to 0,
                 R.id.middle to 1,
-                R.id.highlight to 2,
+                R.id.highlight to 3,
 //                R.id.liveScore to 4,
             )
         }
