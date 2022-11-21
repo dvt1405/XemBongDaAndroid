@@ -31,7 +31,7 @@ import javax.net.ssl.X509TrustManager
 @Module
 class RepositoryModule {
     companion object {
-        private const val SOURCE_91_PHUT = "91phut"
+        private const val SOURCE_91_PHUT = "phut91"
         private const val SOURCE_XOI_LAC_10_PHUT = "xoilac10"
         private const val BinhLuan90Config = "binhluan90"
         private const val VE_BO = "vebo"
