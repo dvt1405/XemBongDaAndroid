@@ -65,7 +65,7 @@ class VeBoRepositoryImpl @Inject constructor(
                     it.data.play_urls.map {
                         LinkStreamWithReferer(
                             it.url,
-                             config.referer ?: "https://vebotv.cc/"
+                             config.referer ?: "https://vebotv.co/"
                         )
                     }
 
