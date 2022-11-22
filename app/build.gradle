@@ -21,14 +21,16 @@ android {
         applicationId "com.kt.apps.xembongda"
         minSdk 21
         targetSdk 32
-        versionCode 22102201
+        versionCode 22112201
         versionName "XemBongDa.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -63,7 +65,7 @@ dependencies {
     implementation project(":skeleton")
     implementation project(":nativetemplates")
 //    implementation project(":dialoglib")
-//    implementation project(":tableview")
+    implementation project(":tableview")
     implementation googlePlayServices.values()
     implementation exoPlayerDependencies.values()
     implementation externalDependencies.values()
