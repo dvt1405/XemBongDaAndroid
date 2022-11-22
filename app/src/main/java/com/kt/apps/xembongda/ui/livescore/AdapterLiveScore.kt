@@ -121,6 +121,7 @@ class AdapterLiveScore : RecyclerView.Adapter<AdapterLiveScore.ViewHolder>(), Pi
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
+        if (_listItem.isEmpty()) return false
         return _listItem[itemPosition] is ILiveScoreModel.LiveScoreTitle
     }
 }

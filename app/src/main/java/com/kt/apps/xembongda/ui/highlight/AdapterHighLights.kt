@@ -64,7 +64,6 @@ class AdapterHighLights :
                 }
             }
         } else {
-            Log.e("TAG", "Bind item")
             super.onBindViewHolder(holder, position)
         }
     }
@@ -79,7 +78,6 @@ class AdapterHighLights :
     }
 
     override fun bindAds(adsBinding: ItemHighLightAdsBinding, position: Int) {
-        Log.e("TAG", listItem[position]::class.java.name)
         val item = _listItem[position] as ItemHighLights.Ads
         if (item.ad == null) {
             App.get().adsLoaderManager.addObserver(this)
