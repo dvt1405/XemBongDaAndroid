@@ -192,7 +192,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     private fun registerVideoLink() {
-        if (type == Type.LiveStream) {
+        if (type == Type.HighLight) {
             highLightViewModel.highLightDetail.observe(this) {
                 handleGetHighLighDetail(it)
             }
