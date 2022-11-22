@@ -1,5 +1,6 @@
 package com.kt.apps.xembongda.base.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -26,7 +27,7 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
                 }
             }
             else -> {
-                if (position % 5 == 0) {
+                if (position % 3 == 0) {
                     adsLayoutRes
                 } else {
                     itemLayoutRes
@@ -62,6 +63,8 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is BaseAdsViewHolder<*> -> {
+                Log.e("ADS", "$position")
+
                 (holder as BaseAdsViewHolder<AD>).onBind()
             }
             is BaseViewHolder<*, *> -> {
@@ -69,7 +72,9 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
                     if (isOneBanner()) {
                         getItem(position)
                     } else {
-                        _listItem[position - (position / 5) - 1]
+                        Log.e("ADS", "$position - ${_listItem.size} - $itemCount")
+                        Log.e("ADS", "${position - (position / 3) - 1}")
+                        _listItem[position - (position / 3) - 1]
                     },
                     if (this::onItemRecyclerViewCLickListener.isInitialized) onItemRecyclerViewCLickListener else null
                 )
@@ -89,10 +94,10 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
     abstract fun bindAds(adsBinding: AD, position: Int)
 
     override fun getItemCount(): Int {
-        return if (_listItem.isEmpty()) 0 else if (isOneBanner()) _listItem.size + 1 else _listItem.size + _listItem.size / 5 + 1
+        return if (_listItem.isEmpty()) 0 else if (isOneBanner()) _listItem.size + 1 else _listItem.size + (_listItem.size + _listItem.size / 3 + 1) / 3 + 1
     }
 
-    fun isOneBanner() = if (oneBanner) true else _listItem.size / 5 < 1
+    fun isOneBanner() = if (oneBanner) true else _listItem.size / 3 < 1
 
     open fun onRefresh(items: List<T>, notifyDataChange: Boolean = true) {
         _listItem.clear()
