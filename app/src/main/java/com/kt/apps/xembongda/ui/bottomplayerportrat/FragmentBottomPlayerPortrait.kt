@@ -260,13 +260,15 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 dialog.dismiss()
                 App.get().rewardedAdsManager.loadAds()
-                    .subscribe {
+                    .subscribe ({
                         activity?.let { it1 ->
                             it.show(it1) {
                                 mainViewModel.increaseComment(it)
                             }
                         }
-                    }
+                    }, {
+                        mainViewModel.increaseComment(1)
+                    })
             }
             .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                 dialog.dismiss()

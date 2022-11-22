@@ -74,32 +74,43 @@ class RewardedAdsManager @Inject constructor(
     }
 
     fun loadAds(adUnits: String = this.adUnits) =
-        Observable.create {
-            RewardedAd.load(
-                context,
-                adUnits,
-                adRequest,
-                object : RewardedAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        adError.responseInfo?.responseId?.let { it1 -> Log.e("TAG", it1) }
-                        it.onError(Throwable())
-                    }
-
-                    override fun onAdLoaded(rewardedAd: RewardedAd) {
-                        rewardedAd.fullScreenContentCallback =
-                            object : FullScreenContentCallback() {
-                                override fun onAdDismissedFullScreenContent() {
-                                    super.onAdDismissedFullScreenContent()
-                                    audioFocusManager.requestFocus()
-                                }
-                            }
-                        it.onNext(rewardedAd)
-                    }
-                })
+        Observable.create { emitter ->
+            loadAds(adUnits, 5, {
+                emitter.onNext(it)
+            }, {
+                emitter.onError(it)
+            })
         }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(AndroidSchedulers.mainThread())
 
+    fun loadAds(adUnits: String, maxRetry: Int = 5 , onLoaded: (ad: RewardedAd) -> Unit, onError: (t: Throwable) -> Unit) {
+        RewardedAd.load(
+            context,
+            adUnits,
+            adRequest,
+            object : RewardedAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    adError.responseInfo?.responseId?.let { it1 -> Log.e("TAG", it1) }
+                    if (maxRetry - 1 < 0) {
+                        onError(Throwable())
+                    } else {
+                        loadAds(adUnits, maxRetry - 1, onLoaded, onError)
+                    }
+                }
+
+                override fun onAdLoaded(rewardedAd: RewardedAd) {
+                    rewardedAd.fullScreenContentCallback =
+                        object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                super.onAdDismissedFullScreenContent()
+                                audioFocusManager.requestFocus()
+                            }
+                        }
+                    onLoaded(rewardedAd)
+                }
+            })
+    }
     fun getAds(): RewardedAd {
         val ads = listAds.last()
         listAds.remove(ads)

@@ -145,4 +145,7 @@ class MainViewModel @Inject constructor(private val interactors: MainInteractors
     fun increaseComment(ads: RewardItem) {
         interactors.commentRepository.increaseComment(ads.amount)
     }
+    fun increaseComment(amount: Int) {
+        interactors.commentRepository.increaseComment(amount)
+    }
 }
