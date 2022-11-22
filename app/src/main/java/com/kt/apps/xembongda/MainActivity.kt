@@ -13,10 +13,14 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.*
+import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kt.apps.xembongda.api.BinhLuan90PhutApi
 import com.kt.apps.xembongda.base.BaseActivity
 import com.kt.apps.xembongda.databinding.ActivityMainBinding
@@ -25,6 +29,7 @@ import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.model.highlights.HighLightDetail
 import com.kt.apps.xembongda.player.ExoPlayerManager
+import com.kt.apps.xembongda.repository.ILiveScoresRepository
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.PlayerActivity
 import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
@@ -41,10 +46,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     lateinit var factory: ViewModelProvider.Factory
 
     @Inject
-    lateinit var exoPlayerManager: ExoPlayerManager
+    lateinit var liveScores: ILiveScoresRepository
 
     @Inject
-    lateinit var api: BinhLuan90PhutApi
+    lateinit var exoPlayerManager: ExoPlayerManager
 
     private val viewModel by lazy {
         ViewModelProvider(this, factory)[MainViewModel::class.java]
@@ -286,6 +291,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 120,
                 true
             )
+            registerMoveViews()
         }
 
         transition.addListener(object : TransitionListenerAdapter() {
@@ -318,6 +324,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         targetColor?.let {
             animateAppAndStatusBar(window.statusBarColor, it)
+        }
+    }
+
+    private fun registerMoveViews() {
+        val view = scene3.sceneRoot.findViewById<StyledPlayerView>(R.id.exo_player)
+        val controlView = view.findViewById<StyledPlayerControlView>(com.google.android.exoplayer2.ui.R.id.exo_controller)
+        view.also {
+            SpringAnimation(it , DynamicAnimation.TRANSLATION_X)
+        }
+        controlView.also {
+
         }
     }
 

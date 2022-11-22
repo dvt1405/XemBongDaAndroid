@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "384093714532-ghckujdk8ap7o8t4eof7m8vd7tkput3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kt.apps.xembongda",
+            "certificate_hash": "2e1f23bbcf5a2b4455b7db098c213a1186ec3add"
+          }
+        },
+        {
           "client_id": "384093714532-h8365reiql9ba41e88bukaabvnn93kma.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kt.apps.xembongda",
             "certificate_hash": "a69f1b49b7f71279f33f6906766084d178dc26c8"
+          }
+        },
+        {
+          "client_id": "384093714532-q80mat39d6a8m4pv6vgpj9a8q67pehso.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kt.apps.xembongda",
+            "certificate_hash": "245c8558a97b430bdaa74b29615677791266ff43"
           }
         },
         {

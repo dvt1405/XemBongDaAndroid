@@ -3,6 +3,7 @@ package com.kt.apps.xembongda.utils
 import android.util.Log
 import com.kt.apps.xembongda.Constants
 import com.kt.apps.xembongda.base.BuildConfig
+import com.kt.apps.xembongda.exceptions.MyException
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -12,21 +13,28 @@ data class JsoupResponse(
     val body: Element,
     val cookie: Map<String, String>
 )
-
+private const val MAX_RETRY_COUNT = 2
 fun jsoupConnect(
     url: String,
     cookie: Map<String, String>,
-    vararg header: Pair<String, String>
+    vararg header: Pair<String, String>,
+    retry: Int = MAX_RETRY_COUNT
 ): Connection {
-    return Jsoup.connect(url)
-        .followRedirects(true)
-        .header("User-agent", Constants.USER_AGENT)
-        .apply {
-            header.forEach {
-                this.header(it.first, it.second)
+    if (retry == 0) throw Throwable("Max retry")
+    return try {
+        Jsoup.connect(url)
+            .followRedirects(true)
+            .header("User-agent", Constants.USER_AGENT)
+            .apply {
+                header.forEach {
+                    this.header(it.first, it.second)
+                }
             }
-        }
-        .cookies(cookie)
+            .cookies(cookie)
+    } catch (e: InterruptedException) {
+        jsoupConnect(url, cookie, *header)
+    }
+
 }
 
 fun jsoupParse(
