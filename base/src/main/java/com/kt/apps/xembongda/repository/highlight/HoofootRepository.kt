@@ -20,7 +20,7 @@ class HoofootRepository @Inject constructor(
     private val keyValueStorage: IKeyValueStorage
 ) : IHighLightRepository {
     companion object {
-        private const val EXTRA_COOKIE_NAME = "extra:cookie_mitom"
+        private const val EXTRA_COOKIE_NAME = "extra:cookie_hoo_foot"
         private const val URL = "https://hoofoot.com/"
         private val TAG = HoofootRepository::class.java.simpleName
     }
@@ -80,10 +80,8 @@ class HoofootRepository @Inject constructor(
             }
             val linkDetail = item.getElementsByTag("a")[0]
             var href = linkDetail.attr("href")
-            Log.e(TAG, href)
 
             val logo = item.getElementsByTag("img")[0].attr("src")
-            Log.e(TAG, logo)
 
             var time = item.getElementsByTag("font")[0].text()
 
@@ -134,8 +132,8 @@ class HoofootRepository @Inject constructor(
         return Observable.create {
             val jsoup = jsoupParse(highLight.detailPage, cookie)
             cookie.putAll(jsoup.cookie)
+            keyValueStorage.save(EXTRA_COOKIE_NAME, cookie)
             val body = jsoup.body
-            Log.e(TAG, body.html())
             val player = body.getElementById("player")!!
             val href = player.getElementsByTag("a")[0].attr("href")
             val links = makeM3u8Link(href).map {
@@ -151,7 +149,6 @@ class HoofootRepository @Inject constructor(
         val jsoup = jsoupParse(href, cookie)
         cookie.putAll(jsoup.cookie)
         val body = jsoup.body.html()
-        Log.e(TAG, body)
         val regex = Pattern.compile("(?<=hls:').*?(?=')")
         val matcher = regex.matcher(body)
         val listLink = mutableListOf<String>()
