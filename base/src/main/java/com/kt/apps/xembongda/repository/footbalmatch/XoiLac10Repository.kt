@@ -13,11 +13,13 @@ import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
 import com.kt.apps.xembongda.storage.IKeyValueStorage
+import com.kt.apps.xembongda.utils.JsoupResponse
 import com.kt.apps.xembongda.utils.jsoupParse
 import com.kt.apps.xembongda.utils.trustEveryone
 import io.reactivex.rxjava3.core.Observable
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import java.io.InterruptedIOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -50,12 +52,20 @@ class XoiLac10Repository @Inject constructor(
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         trustEveryone()
         return Observable.create { emitter ->
-            Log.e("TAG", "SDsdfsdfdsfsdfdsfdsf")
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, config.url)
             }
             val listFootballMatch = mutableListOf<FootballMatch>()
-            val response = jsoupParse(config.url, cookie)
+            val response: JsoupResponse? = try {
+                jsoupParse(config.url, cookie)
+            } catch (e: InterruptedIOException) {
+                null
+            }
+            if (response == null) {
+                if (emitter.isDisposed) return@create
+                emitter.onError(Throwable())
+                return@create
+            }
             cookie.putAll(response.cookie)
             val allMatches = response.body.getElementsByClass(itemClassName)
             for (match in allMatches) {
@@ -69,11 +79,14 @@ class XoiLac10Repository @Inject constructor(
                 }
             }
             if (listFootballMatch.isEmpty()) {
+                if (emitter.isDisposed) return@create
                 emitter.onError(FootballMatchThrowable("Gặp sự cố khi tải trang"))
             } else {
+                if (emitter.isDisposed) return@create
                 emitter.onNext(listFootballMatch)
                 keyValueStorage.save(EXTRA_COOKIE_NAME, cookie)
             }
+            if (emitter.isDisposed) return@create
             emitter.onComplete()
         }
     }
