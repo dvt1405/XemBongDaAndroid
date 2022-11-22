@@ -2,6 +2,7 @@ package com.kt.apps.xembongda.repository.livescores
 
 import android.util.Log
 import com.google.gson.Gson
+import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.model.FootballTeam
 import com.kt.apps.xembongda.model.League
 import com.kt.apps.xembongda.model.LiveScoreDTO
@@ -16,6 +17,7 @@ class BongDa24hLiveScores @Inject constructor(
 
 ) : ILiveScoresRepository {
     companion object {
+        private val TAG = BongDa24hLiveScores::class.java.simpleName
         private const val URL = "https://bongda24h.vn/livescore.html"
         private const val path = "/livescore.html"
     }
@@ -35,22 +37,59 @@ class BongDa24hLiveScores @Inject constructor(
             cookies.putAll(jsoup.cookie)
             val listItems = mutableListOf<LiveScoreDTO>()
             val tableLiveScore = jsoup.body.getElementById("ltd_kq_byleague")
+            var lastHeader: LiveScoreDTO.Title? = null
             tableLiveScore?.getElementsByTag("div")?.forEach {
                 if (it.className() == "football-header") {
-                    mapHeaderItems(it)?.let { it1 -> listItems.add(it1) }
+                    mapHeaderItems(it)?.let { title ->
+                        lastHeader = title
+                        if (!listItems.contains(lastHeader!!)) {
+                            listItems.add(title)
+                        }
+                    }
                 } else if (it.className() == "football-match-livescore") {
-                    mapFootballItem(it)?.let { it1 -> listItems.add(it1) }
+                    val nextItemPosition = getNextItemPosition(lastHeader, listItems, listItems.size)
+                    mapFootballItem(it)?.let { match -> listItems.add(nextItemPosition, match.apply {
+                        this.header = lastHeader
+                    }) }
                 }
             }
             if (listItems.isEmpty()) {
                 emitter.onError(Throwable(""))
             } else {
-                Log.e("TAG", Gson().toJson(listItems))
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, Gson().toJson(listItems))
+                }
                 emitter.onNext(listItems)
             }
 
         }.subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
+    }
+
+    private fun getNextItemPosition(
+        lastHeader: LiveScoreDTO.Title?,
+        listItems: List<LiveScoreDTO>,
+        listSize: Int
+    ): Int {
+        if(lastHeader == null || listItems.indexOf(lastHeader) == listSize - 1) {
+            return listSize
+        }
+
+        val nextItemPosition = listItems.indexOf(lastHeader)
+
+        var nextHeaderPosition = nextItemPosition
+        for (i in nextItemPosition + 1 until listItems.size) {
+            if (listItems[i] is LiveScoreDTO.Title) {
+                nextHeaderPosition = i
+                break
+            }
+        }
+
+        return if (nextItemPosition < nextHeaderPosition) {
+            nextHeaderPosition
+        } else {
+            listSize
+        }
     }
 
     private fun mapFootballItem(element: Element): LiveScoreDTO.Match? {
