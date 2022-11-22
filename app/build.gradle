@@ -21,7 +21,7 @@ android {
         applicationId "com.kt.apps.xembongda"
         minSdk 21
         targetSdk 32
-        versionCode 22112201
+        versionCode 22112202
         versionName "XemBongDa.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
