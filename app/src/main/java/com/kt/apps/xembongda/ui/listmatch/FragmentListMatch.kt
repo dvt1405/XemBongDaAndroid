@@ -256,7 +256,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
 
             }
             is DataState.Error -> {
-                showErrorDialog(content = "Thử tải lại trang để cập nhật link mới nhất")
+                showErrorDialog(content = listMatch.throwable.message ?: "Thử tải lại trang để cập nhật link mới nhất")
                 binding.swipeRefreshLayout.isEnabled = true
                 binding.swipeRefreshLayout.isRefreshing = false
             }
