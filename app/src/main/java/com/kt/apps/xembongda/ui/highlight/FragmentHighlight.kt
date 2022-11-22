@@ -70,9 +70,9 @@ class FragmentHighlight : BaseFragment<FragmentHighlightBinding>() {
     }
 
     override fun initAction(savedInstanceState: Bundle?) {
+        skeleton.run()
         if (savedInstanceState == null) {
             viewModel.getHighlight(1)
-            skeleton.run()
         }
         viewModel.highlightLiveData.observe(this) {
             handleHighLight(it)
@@ -94,7 +94,9 @@ class FragmentHighlight : BaseFragment<FragmentHighlightBinding>() {
                 binding.swipeRefreshLayout.isRefreshing = false
                 binding.swipeRefreshLayout.isEnabled = false
                 if (viewModel.currentPage == 1) {
-                    skeleton.run()
+                    if (!skeleton.isRunning) {
+                        skeleton.run()
+                    }
                 } else {
                     adapterHighLights.onLoading()
                 }

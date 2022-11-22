@@ -1,6 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/common_padding"
+    tools:ignore="MissingDefaultResource">
+
+    <View
+        android:id="@+id/titleStadieum"
+        android:layout_width="@dimen/padding_0dp"
+        android:layout_height="10dp"
+        android:background="@drawable/anim_list_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="@dimen/common_padding"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/anim_list_circle"
+        app:layout_constraintEnd_toStartOf="@+id/titleStadieum"
+        app:layout_constraintTop_toBottomOf="@+id/titleStadieum" />
+
+    <View
+        android:layout_width="@dimen/padding_0dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="@dimen/common_padding"
+        android:background="@drawable/anim_list_text_view"
+        app:layout_constraintEnd_toEndOf="@+id/view5"
+        app:layout_constraintStart_toStartOf="@+id/view5"
+        app:layout_constraintTop_toBottomOf="@+id/view5" />
+
+    <View
+        android:id="@+id/view6"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/anim_list_circle"
+        app:layout_constraintStart_toEndOf="@+id/titleStadieum"
+        app:layout_constraintTop_toTopOf="@+id/view5" />
+
+    <View
+        android:layout_width="@dimen/padding_0dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="@dimen/common_padding"
+        android:background="@drawable/anim_list_text_view"
+        app:layout_constraintEnd_toEndOf="@+id/view6"
+        app:layout_constraintStart_toStartOf="@+id/view6"
+        app:layout_constraintTop_toBottomOf="@+id/view5" />
+
+    <View
+        android:id="@+id/view7"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:background="@drawable/anim_list_text_view"
+        app:layout_constraintBottom_toBottomOf="@+id/view5"
+        app:layout_constraintEnd_toEndOf="@id/titleStadieum"
+        app:layout_constraintStart_toStartOf="@id/titleStadieum"
+        app:layout_constraintTop_toTopOf="@+id/view5" />
+
+    <View
+        android:id="@+id/viewMinute"
+        android:layout_width="70dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/anim_list_text_view"
+        app:layout_constraintEnd_toEndOf="@+id/view7"
+        app:layout_constraintStart_toStartOf="@+id/view7"
+        app:layout_constraintTop_toBottomOf="@+id/view7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

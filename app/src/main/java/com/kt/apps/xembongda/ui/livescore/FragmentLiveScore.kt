@@ -8,9 +8,11 @@ import com.kt.apps.xembongda.databinding.FragmentLiveScoreBinding
 import com.kt.apps.xembongda.model.LiveScoreDTO
 import com.kt.apps.xembongda.repository.ILiveScoresRepository
 import com.kt.skeleton.CustomItemDivider
+import com.kt.skeleton.KunSkeleton
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -31,14 +33,31 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
         CompositeDisposable()
     }
 
+    private val liveScoreSkeleton by lazy {
+        KunSkeleton.bind(binding.recyclerView)
+            .adapter(_adapter)
+            .layoutItem(R.layout.item_live_scores_skeleton)
+            .build()
+    }
+
     override fun initView(savedInstanceState: Bundle?) {
         binding.recyclerView.adapter = _adapter
         binding.recyclerView.addItemDecoration(CustomItemDivider(requireContext()))
-        binding.recyclerView.addItemDecoration(PinItemDecoration(binding.recyclerView, _adapter))
 
     }
 
     override fun initAction(savedInstanceState: Bundle?) {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isEnabled = false
+            disposable.clear()
+            getLiveScore()
+        }
+        getLiveScore()
+    }
+
+    private fun getLiveScore(){
+        liveScoreSkeleton.run()
         disposable.add(
             Observable.interval(0,2, TimeUnit.MINUTES)
                 .observeOn(Schedulers.io())
@@ -55,9 +74,14 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    if (liveScoreSkeleton.isRunning) {
+                        liveScoreSkeleton.hide {
+                            binding.recyclerView.addItemDecoration(PinItemDecoration(binding.recyclerView, _adapter))
+                        }
+                    }
+                    binding.swipeRefreshLayout.isEnabled = true
                     _adapter.onRefresh(it)
                 }, {
-                    Log.e("TAG", it.message, it)
                 })
         )
     }
