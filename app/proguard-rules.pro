@@ -19,6 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
 -keep class cn.pedant.SweetAlert.** {*; }
 -keep class com.kt.apps.xembongda.model.football.** {*; }
--dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
+-keep class com.kt.apps.xembongda.model.authenticate.** {*; }
+-keep class com.kt.apps.xembongda.model.comments.** {*; }
+-keep class com.kt.apps.xembongda.model.UserDTO {*; }
