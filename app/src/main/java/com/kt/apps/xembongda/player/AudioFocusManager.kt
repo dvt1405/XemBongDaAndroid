@@ -13,7 +13,7 @@ class AudioFocusManager @Inject constructor(
 ) {
     private val audioAttributes by lazy {
         AudioAttributes.Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .setLegacyStreamType(AudioManager.STREAM_MUSIC)
             .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
             .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -52,10 +52,6 @@ class AudioFocusManager @Inject constructor(
             this._onFocusChange = it
         }
         val audioService = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val streamVolume = audioService.getStreamVolume(AudioManager.STREAM_MUSIC)
-        val maxVolume = audioService.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        Log.e("TAG", "$streamVolume")
-        Log.e("TAG", "$maxVolume")
         _audioSessionId ?: return
         _audioSessionId = audioService.generateAudioSessionId()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

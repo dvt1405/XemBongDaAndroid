@@ -70,8 +70,7 @@ class ExoPlayerManager @Inject constructor(
 
     private val audioAttr by lazy {
         AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
-            .setFlags(C.FLAG_AUDIBILITY_ENFORCED)
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
