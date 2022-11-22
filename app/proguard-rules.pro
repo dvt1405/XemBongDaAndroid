@@ -21,3 +21,4 @@
 #-renamesourcefileattribute SourceFile
 -keep class cn.pedant.SweetAlert.** {*; }
 -keep class com.kt.apps.xembongda.model.football.** {*; }
+-dontwarn com.google.protobuf.java_com_google_ads_interactivemedia_v3__sdk_1p_binary_b0308732GeneratedExtensionRegistryLite$Loader
