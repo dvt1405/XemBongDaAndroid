@@ -1,6 +1,7 @@
 package com.kt.apps.xembongda.base
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.os.Looper
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -18,6 +20,7 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.kt.apps.xembongda.utils.showSuccessDialog
 import com.kt.apps.xembongda.utils.updateLocale
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -44,6 +47,9 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(), HasAndro
                 InstallStatus.DOWNLOADED -> {
 
                 }
+                else -> {
+
+                }
             }
         }
     }
@@ -67,7 +73,9 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(), HasAndro
                 updateManager.registerListener(appUpdateListener)
                 updateManager.startUpdateFlowForResult(
                     updateInfo,
-                    AppUpdateType.IMMEDIATE, this, UPDATE_REQUEST_CODE
+                    AppUpdateType.IMMEDIATE,
+                    this,
+                    UPDATE_REQUEST_CODE
                 )
             }
         }
@@ -85,11 +93,11 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(), HasAndro
         if (doubleBackToFinish) {
             finish()
         } else {
-//            Toast.makeText(
-//                this,
-//                getString(com.kt.apps.xembongda.R.string.double_back_to_finish_title),
-//                Toast.LENGTH_SHORT
-//            ).show()
+            Toast.makeText(
+                this,
+                getString(R.string.double_back_to_finish_title),
+                Toast.LENGTH_SHORT
+            ).show()
         }
         doubleBackToFinish = true
         Handler(Looper.getMainLooper()).postDelayed({
@@ -117,18 +125,26 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(), HasAndro
         return super.dispatchTouchEvent(ev)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UPDATE_REQUEST_CODE) {
+            if (resultCode != RESULT_OK) {
+                showSuccessDialog({}, "App update fail!")
+            } else {
+                updateManager.unregisterListener(appUpdateListener)
+                showSuccessDialog({}, "App update success")
+            }
+        }
+    }
+
     fun popupSnackbarForCompleteUpdate() {
         Snackbar.make(
             binding.root,
             "An update has just been downloaded.",
             Snackbar.LENGTH_SHORT
         ).apply {
-//            setActionTextColor(
-//                ContextCompat.getColor(
-//                    context,
-//                    com.kt.apps.xembongda.R.color.textColorWhiteDim
-//                )
-//            )
+            setAction("RESTART") { updateManager.completeUpdate() }
+            setActionTextColor(resources.getColor(R.color.textColorWhiteDim))
             show()
         }
     }
