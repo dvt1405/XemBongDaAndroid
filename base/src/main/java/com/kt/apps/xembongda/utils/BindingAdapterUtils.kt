@@ -50,7 +50,7 @@ fun bindImageWithLogo(view: ImageView, url: String) {
 
 fun ImageView.loadImage(
     url: String?,
-    @DrawableRes defImg: Int = R.drawable.image_place_holder_corner_8,
+    @DrawableRes defImg: Int = R.drawable.app_icon,
     placeHolder: Int = R.drawable.image_place_holder_corner_8,
 ) {
     if (url.isNullOrEmpty()) {
