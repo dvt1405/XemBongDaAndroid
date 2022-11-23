@@ -5,13 +5,13 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-//    id 'applovin-quality-service'
+    id 'applovin-quality-service'
 
 }
 
-//applovin {
-//    apiKey "avJkJkTUhqmoZGJTcdqgylRVHN9sbc3ZSUbub3UL1fXR3fXOyqupneiTBSvfi8FT0iI060T6danq4i-z5ZaZJp"
-//}
+applovin {
+    apiKey "avJkJkTUhqmoZGJTcdqgylRVHN9sbc3ZSUbub3UL1fXR3fXOyqupneiTBSvfi8FT0iI060T6danq4i-z5ZaZJp"
+}
 
 android {
     namespace 'com.kt.apps.xembongda'
@@ -21,7 +21,7 @@ android {
         applicationId "com.kt.apps.xembongda"
         minSdk 21
         targetSdk 32
-        versionCode 22112202
+        versionCode 22112304
         versionName "XemBongDa.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -72,6 +72,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
     implementation 'com.applovin:applovin-sdk:+'
     implementation authen.values()
+    implementation ads.values()
     implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-core:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-appcompat:4.0.0'

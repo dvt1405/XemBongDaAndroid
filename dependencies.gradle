@@ -71,4 +71,8 @@ ext {
             googleAuthen: "com.google.android.gms:play-services-auth:20.3.0",
 //            facebook: "com.facebook.android:facebook-android-sdk:[4,5)"
     ]
+    ads = [
+            applovin: 'com.applovin:applovin-sdk:+',
+            applovinAdapter: "com.google.ads.mediation:applovin:11.5.5.0"
+    ]
 }
