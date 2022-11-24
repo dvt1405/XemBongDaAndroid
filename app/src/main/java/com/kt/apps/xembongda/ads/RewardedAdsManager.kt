@@ -41,9 +41,7 @@ class RewardedAdsManager @Inject constructor(
                     adRequest,
                     object : RewardedAdLoadCallback() {
                         override fun onAdFailedToLoad(adError: LoadAdError) {
-                            Log.e("TAG", adError.message)
                             adError.responseInfo?.responseId?.let { it1 -> Log.e("TAG", it1) }
-                            Log.e("TAG", adError.domain)
                             it.onError(Throwable())
                         }
 
@@ -76,9 +74,13 @@ class RewardedAdsManager @Inject constructor(
     fun loadAds(adUnits: String = this.adUnits) =
         Observable.create { emitter ->
             loadAds(adUnits, 5, {
-                emitter.onNext(it)
+                if (!emitter.isDisposed) {
+                    emitter.onNext(it)
+                }
             }, {
-                emitter.onError(it)
+                if(!emitter.isDisposed){
+                    emitter.onError(it)
+                }
             })
         }
             .observeOn(AndroidSchedulers.mainThread())
