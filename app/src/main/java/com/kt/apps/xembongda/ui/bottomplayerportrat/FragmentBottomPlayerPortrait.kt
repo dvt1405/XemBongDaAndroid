@@ -81,7 +81,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     private val type by lazy {
-        when(requireArguments().getInt(EXTRA_TYPE)) {
+        when(arguments?.getInt(EXTRA_TYPE)) {
             Type.HighLight.value -> Type.HighLight
             else -> Type.LiveStream
         }
@@ -149,7 +149,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
         binding.formComment.btnSend.clicks().throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe ({
                 if (loginViewModel.isNeedReLogin) {
                     showLogin()
                     return@subscribe
@@ -164,7 +164,9 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
                     binding.formComment.formComment.clearFocus()
                     binding.recyclerViewComment.scrollToPosition(0)
                 }
-            }
+            }, {
+
+            })
         viewModel.sendComment.observe(this) {
             handleSendComment(it)
         }
@@ -236,7 +238,9 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
     private fun loadComments() {
         if (type == Type.LiveStream) {
-            viewModel.loadComment(CommentSpace.Match(mainViewModel.currentMatch!!))
+            mainViewModel.currentMatch?.let {
+                viewModel.loadComment(CommentSpace.Match(it))
+            }
         } else {
             requireArguments().getParcelable<HighLightDTO>(EXTRA_HIGH_LIGHT)?.let {
                 viewModel.loadCommentHighLight(it)
