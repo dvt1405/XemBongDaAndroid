@@ -7,6 +7,7 @@ import com.kt.apps.xembongda.model.FootballTeam
 import com.kt.apps.xembongda.model.League
 import com.kt.apps.xembongda.model.LiveScoreDTO
 import com.kt.apps.xembongda.repository.ILiveScoresRepository
+import com.kt.apps.xembongda.utils.JsoupResponse
 import com.kt.apps.xembongda.utils.jsoupParse
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -33,7 +34,11 @@ class BongDa24hLiveScores @Inject constructor(
     override fun getLiveScore(): Observable<List<LiveScoreDTO>> {
 
         return Observable.create<List<LiveScoreDTO>> { emitter ->
-            val jsoup = jsoupParse(URL, cookies)
+            val jsoup : JsoupResponse = try {
+                jsoupParse(URL, cookies)
+            } catch (e: Exception) {
+                null
+            } ?: return@create
             cookies.putAll(jsoup.cookie)
             val listItems = mutableListOf<LiveScoreDTO>()
             val tableLiveScore = jsoup.body.getElementById("ltd_kq_byleague")
@@ -54,11 +59,13 @@ class BongDa24hLiveScores @Inject constructor(
                 }
             }
             if (listItems.isEmpty()) {
+                if (emitter.isDisposed) return@create
                 emitter.onError(Throwable(""))
             } else {
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, Gson().toJson(listItems))
                 }
+                if (emitter.isDisposed) return@create
                 emitter.onNext(listItems)
             }
 

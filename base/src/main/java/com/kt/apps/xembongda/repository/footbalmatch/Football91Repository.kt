@@ -54,6 +54,7 @@ class Football91Repository @Inject constructor(
             val response = try {
                 jsoupParse(config.url, cookie)
             } catch (e: Exception) {
+                if (emitter.isDisposed) return@create
                 emitter.onError(e.mapToMyException())
                 return@create
             }
@@ -68,8 +69,10 @@ class Football91Repository @Inject constructor(
                 }
             }
             if (listFootballMatch.isEmpty()) {
+                if (emitter.isDisposed) return@create
                 emitter.onError(FootballMatchThrowable("Gặp sự cố khi tải trang"))
             } else {
+                if (emitter.isDisposed) return@create
                 emitter.onNext(listFootballMatch)
                 keyValueStorage.save(EXTRA_COOKIE_NAME, cookie)
             }
@@ -134,7 +137,13 @@ class Football91Repository @Inject constructor(
         return Observable.create { emitter ->
             val lastMatchDetail: FootballMatchWithStreamLink?
             val listM3u8 = mutableListOf<LinkStreamWithReferer>()
-            val response = jsoupParse(match.detailPage, cookie, Pair("referer", match.detailPage))
+            val response = try {
+                jsoupParse(match.detailPage, cookie, Pair("referer", match.detailPage))
+            } catch (e: Exception) {
+                if (emitter.isDisposed) return@create
+                emitter.onError(e.mapToMyException())
+                return@create
+            }
             cookie.putAll(response.cookie)
             val dom = response.body
             val iframes = dom.getElementById("player")!!.getElementsByTag("iframe")
@@ -173,6 +182,7 @@ class Football91Repository @Inject constructor(
             }
             lastMatchDetail = FootballMatchWithStreamLink(match, listM3u8)
             saveFootballMatch(lastMatchDetail.match, Gson().toJson(lastMatchDetail.linkStreams))
+            if (emitter.isDisposed) return@create
             emitter.onNext(lastMatchDetail)
             emitter.onComplete()
         }.doOnError {
