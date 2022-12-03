@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5fecb9a5-94cc-49ae-b5f2-c24f75ef8d08" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../app/src/debug/res/values/ads_id.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/adcolony/AdColonyManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/applovin/ApplovinAdsManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/applovin/ApplovinOpenAdsManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/receiver/VolumeChangeReceiver.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/service/UpdateConfigService.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/listmatch/model/ItemMatch.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/drawable/team_line_up.jpeg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_lines_up.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../app/src/release/res/values/ads_id.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/exceptions/connection/ConnectionTimeOut.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/FirebaseLoggingUtils.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/VTVBackupRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/highlight/Xoilac6LiveOrg.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/usecase/logging/FirebaseLogUtils.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.safedk/app_sdks.lst" beforeDir="false" afterPath="$PROJECT_DIR$/../.safedk/app_sdks.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.safedk/dex/SafeDKAndroid-5.6.14.dex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.safedk/hashes.safedk" beforeDir="false" afterPath="$PROJECT_DIR$/../.safedk/hashes.safedk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.safedk/plugin.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../.safedk/plugin.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/default/google-services.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/release/app-release.aab" beforeDir="false" afterPath="$PROJECT_DIR$/../app/release/app-release.aab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/release/output-metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/../app/release/output-metadata.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/App.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/App.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/AdsInterstitialManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/AdsInterstitialManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/AdsNativeManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ads/AdsNativeManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/player/ExoPlayerManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/player/ExoPlayerManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/service/FcmService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/service/FcmService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/bottomplayerportrat/AdapterListM3u8Link.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/bottomplayerportrat/AdapterListM3u8Link.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/bottomplayerportrat/FragmentBottomPlayerPortrait.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/bottomplayerportrat/FragmentBottomPlayerPortrait.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/livescore/FragmentLiveScore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/livescore/FragmentLiveScore.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/livescore/PinItemDecoration.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/livescore/PinItemDecoration.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/tabs/AdapterFootballListPager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/tabs/AdapterFootballListPager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/AdapterRanking.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/AdapterRanking.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/WorldCupViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/WorldCupViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/AdapterTableView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/AdapterTableView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/IRowHeaderModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/IRowHeaderModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/RowHeaderViewHolder.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/adapter/RowHeaderViewHolder.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/model/EuroFootballMatch.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/com/kt/apps/xembongda/ui/worldcup/model/EuroFootballMatch.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/ad_view_container.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/ad_view_container.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/exo_player_custom_controller.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/exo_player_custom_controller.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_live_score.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/fragment_live_score.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/item_link_stream.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/item_link_stream.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/layout/table_view_row_header_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/layout/table_view_row_header_layout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/di/RepositoryModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/di/RepositoryModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/model/LinkStreamWithReferer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/model/LinkStreamWithReferer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/config/FootballRepoSourceFrom.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/config/FootballRepoSourceFrom.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/BinhLuan90PhutRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/BinhLuan90PhutRepositoryImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/Football91Repository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/Football91Repository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/MitomRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/MitomRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/VeBoRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/VeBoRepositoryImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/XoiLac10Repository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/java/com/kt/apps/xembongda/repository/footbalmatch/XoiLac10Repository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base/src/main/res/xml/remote_config_default_values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base/src/main/res/xml/remote_config_default_values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dependencies.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../dependencies.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tableview/src/main/java/com/evrencoskun/tableview/TableView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../tableview/src/main/java/com/evrencoskun/tableview/TableView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tableview/src/main/res/drawable/cell_line_divider.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../tableview/src/main/res/drawable/cell_line_divider.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2IMcfQaX81htKDMyoVFFkE8p0wI" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="cidr.known.project.marker" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5fecb9a5-94cc-49ae-b5f2-c24f75ef8d08" name="Changes" comment="" />
+      <created>1669994995576</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1669994995576</updated>
+    </task>
+    <servers />
+  </component>
+</project>
