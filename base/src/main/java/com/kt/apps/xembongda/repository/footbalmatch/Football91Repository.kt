@@ -1,6 +1,7 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
-import android.util.Log
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.exceptions.FootballMatchThrowable
@@ -9,6 +10,7 @@ import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.FootballTeam
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
+import com.kt.apps.xembongda.repository.FirebaseLoggingUtils
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
@@ -16,7 +18,6 @@ import com.kt.apps.xembongda.storage.IKeyValueStorage
 import com.kt.apps.xembongda.utils.jsoupParse
 import com.kt.apps.xembongda.utils.trustEveryone
 import io.reactivex.rxjava3.core.Observable
-import org.jsoup.Connection.Response
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.regex.Matcher
@@ -40,6 +41,10 @@ class Football91Repository @Inject constructor(
         ).toMutableMap()
     }
 
+    private val url: String?
+        get() = Firebase.remoteConfig
+            .getString(RepositoryModule.SOURCE_91_PHUT)
+
     private val itemClassName: String by lazy {
         config.itemClassName ?: "matches__item col-lg-6 col-sm-6"
     }
@@ -47,12 +52,14 @@ class Football91Repository @Inject constructor(
     override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
         TODO("Not yet implemented")
     }
+
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         trustEveryone()
-        return Observable.create { emitter ->
+        return Observable.create<List<FootballMatch>?> { emitter ->
+            Firebase.remoteConfig.fetchAndActivate()
             val listFootballMatch = mutableListOf<FootballMatch>()
             val response = try {
-                jsoupParse(config.url, cookie)
+                jsoupParse(url ?: config.url, cookie)
             } catch (e: Exception) {
                 if (emitter.isDisposed) return@create
                 emitter.onError(e.mapToMyException())
@@ -77,6 +84,10 @@ class Football91Repository @Inject constructor(
                 keyValueStorage.save(EXTRA_COOKIE_NAME, cookie)
             }
             emitter.onComplete()
+        }.doOnNext {
+            FirebaseLoggingUtils.logGetAllMatches(FootballRepoSourceFrom.Phut91)
+        }.doOnError {
+            FirebaseLoggingUtils.logGetAllMatchesFail(FootballRepoSourceFrom.Phut91, it)
         }
     }
 
@@ -149,7 +160,7 @@ class Football91Repository @Inject constructor(
             val iframes = dom.getElementById("player")!!.getElementsByTag("iframe")
             for (frame in iframes) {
                 val src = frame.attributes().get("src")
-                parseM3u8LinkFromFrame(src)?.let {
+                parseM3u8LinkFromFrame(src, url ?: match.detailPage)?.let {
                     listM3u8.addAll(it)
                 }
 
@@ -173,7 +184,7 @@ class Football91Repository @Inject constructor(
                             .get("src")
 
 
-                        parseM3u8LinkFromFrame(detailDom)?.let {
+                        parseM3u8LinkFromFrame(detailDom, url ?: match.detailPage)?.let {
                             listM3u8.addAll(it)
                         }
                     } catch (_: Exception) {
@@ -185,8 +196,10 @@ class Football91Repository @Inject constructor(
             if (emitter.isDisposed) return@create
             emitter.onNext(lastMatchDetail)
             emitter.onComplete()
+        }.doOnNext {
+            FirebaseLoggingUtils.logGetMatchesDetail(match, FootballRepoSourceFrom.Phut91)
         }.doOnError {
-            Log.e("TAG", it.message, it)
+            FirebaseLoggingUtils.logGetMatchesDetailFail(match, FootballRepoSourceFrom.Phut91, it)
         }
     }
 
@@ -194,9 +207,9 @@ class Football91Repository @Inject constructor(
 
     }
 
-    private fun parseM3u8LinkFromFrame(src: String): List<LinkStreamWithReferer>? {
+    private fun parseM3u8LinkFromFrame(src: String, referer: String): List<LinkStreamWithReferer>? {
         val listUrl = mutableListOf<String>()
-        val response = jsoupParse(src, cookie, Pair("referer", config.url))
+        val response = jsoupParse(src, cookie, Pair("referer", referer))
         cookie.putAll(response.cookie)
 
         val m3u8Dom = response.body

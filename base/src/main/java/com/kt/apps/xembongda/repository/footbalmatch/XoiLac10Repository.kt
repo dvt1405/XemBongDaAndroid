@@ -1,6 +1,8 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
 import android.util.Log
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.kt.apps.xembongda.base.BuildConfig
 import com.kt.apps.xembongda.di.RepositoryModule
@@ -46,18 +48,25 @@ class XoiLac10Repository @Inject constructor(
         config.itemClassName ?: "grid-matches__item"
     }
 
+
+    private val url: String
+        get() = Firebase.remoteConfig
+            .getString(RepositoryModule.SOURCE_XOI_LAC_10_PHUT)
+
+
     override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
         TODO("Not yet implemented")
     }
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         trustEveryone()
         return Observable.create { emitter ->
+            Firebase.remoteConfig.fetchAndActivate()
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, config.url)
+                Log.d(TAG, url)
             }
             val listFootballMatch = mutableListOf<FootballMatch>()
             val response: JsoupResponse? = try {
-                jsoupParse(config.url, cookie)
+                jsoupParse(url, cookie)
             } catch (e: InterruptedIOException) {
                 null
             }
@@ -152,7 +161,7 @@ class XoiLac10Repository @Inject constructor(
             val iframes = dom.getElementById("play_main")!!.getElementsByTag("iframe")
             for (frame in iframes) {
                 val src = frame.attributes().get("src")
-                parseM3u8LinkFromFrame(src)?.let {
+                parseM3u8LinkFromFrame(src, url)?.let {
                     listM3u8.addAll(it)
                 }
 
@@ -176,7 +185,7 @@ class XoiLac10Repository @Inject constructor(
                             .get("src")
 
 
-                        parseM3u8LinkFromFrame(detailDom)?.let {
+                        parseM3u8LinkFromFrame(detailDom, url)?.let {
                             listM3u8.addAll(it)
                         }
                     } catch (_: Exception) {
@@ -195,9 +204,9 @@ class XoiLac10Repository @Inject constructor(
 
     }
 
-    private fun parseM3u8LinkFromFrame(src: String): List<LinkStreamWithReferer>? {
+    private fun parseM3u8LinkFromFrame(src: String, referer: String): List<LinkStreamWithReferer>? {
         val listUrl = mutableListOf<String>()
-        val response = jsoupParse(src, cookie, Pair("referer", config.url))
+        val response = jsoupParse(src, cookie, Pair("referer", referer))
         cookie.putAll(response.cookie)
 
         val m3u8Dom = response.body

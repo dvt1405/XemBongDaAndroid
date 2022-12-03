@@ -1,13 +1,15 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
 import android.util.Log
-import com.google.gson.Gson
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.exceptions.FootballMatchThrowable
 import com.kt.apps.xembongda.model.FootballMatch
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.FootballTeam
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
+import com.kt.apps.xembongda.repository.FirebaseLoggingUtils
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
@@ -37,8 +39,13 @@ class MitomRepository @Inject constructor(
         ).toMutableMap()
     }
 
+    private val url: String?
+        get() = Firebase.remoteConfig
+            .getString(RepositoryModule.SOURCE_MITOM)
+
+
     override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
-        return Observable.create { emiter ->
+        return Observable.create<List<FootballMatch>?> { emiter ->
             val bodyHtml = Jsoup.parse(html)
             val matchItems = bodyHtml.getElementsByClass("list-channel col-xs-12 col-sm-6")
             val listMatch = mutableListOf<FootballMatch>()
@@ -97,10 +104,14 @@ class MitomRepository @Inject constructor(
                 emiter.onNext(listMatch)
             }
             emiter.onComplete()
+        }.doOnNext {
+            FirebaseLoggingUtils.logGetAllMatches(FootballRepoSourceFrom.MiTom)
+        }.doOnError {
+            FirebaseLoggingUtils.logGetAllMatchesFail(FootballRepoSourceFrom.MiTom, it)
         }
     }
     override fun getAllMatches(): Observable<List<FootballMatch>> {
-        return Observable.create { emiter ->
+        return Observable.create<List<FootballMatch>?> { emiter ->
             val mainPage = jsoupParse(config.url, cookie)
             cookie.putAll(mainPage.cookie)
             val bodyHtml = mainPage.body
@@ -162,6 +173,12 @@ class MitomRepository @Inject constructor(
             }
             emiter.onComplete()
         }
+            .doOnNext {
+                FirebaseLoggingUtils.logGetAllMatches(FootballRepoSourceFrom.MiTom)
+            }
+            .doOnError {
+                FirebaseLoggingUtils.logGetAllMatchesFail(FootballRepoSourceFrom.MiTom, it)
+            }
     }
 
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
@@ -169,7 +186,7 @@ class MitomRepository @Inject constructor(
             val detailUrl = if (match.detailPage.startsWith("http")) {
                 match.detailPage
             } else {
-                "${config.url}${match.detailPage.removePrefix("/")}"
+                "${url ?: config.url}${match.detailPage.removePrefix("/")}"
             }
             Log.e("TAG", "Detail page: $detailUrl")
             val list = mutableListOf<String>()
@@ -193,6 +210,10 @@ class MitomRepository @Inject constructor(
                     list.map { LinkStreamWithReferer(it, detailUrl) })
             )
             emiter.onComplete()
+        }.doOnNext {
+            FirebaseLoggingUtils.logGetMatchesDetail(match, FootballRepoSourceFrom.MiTom)
+        }.doOnError {
+            FirebaseLoggingUtils.logGetMatchesDetailFail(match, FootballRepoSourceFrom.MiTom, it)
         }
     }
 

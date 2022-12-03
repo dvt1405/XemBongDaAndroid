@@ -1,6 +1,8 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
 import android.util.Log
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.kt.apps.xembongda.api.VeBoApi
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.model.FootballMatch
@@ -25,8 +27,13 @@ class VeBoRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    private val referer: String?
+        get() = Firebase.remoteConfig
+            .getString(RepositoryModule.VEBO_REFERER)
+
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         return Observable.merge(api.getAllMatchFrom90Phut(), detail.getAllOtherFrom90Phut())
+
             .doOnError {
                 throw it
             }
@@ -47,13 +54,14 @@ class VeBoRepositoryImpl @Inject constructor(
                         ),
                         kickOffTime = "${data.timestamp/1000}",
                         statusStream = data.match_status,
-                        detailPage = "${config.referer}truc-tiep/${data.id}",
+                        detailPage = "${referer}truc-tiep/${data.id}",
                         matchId = data.id,
                         sourceFrom = FootballRepoSourceFrom.VeBo,
                         league = data.tournament.name
                     )
                 }
             }
+
     }
 
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
@@ -65,7 +73,7 @@ class VeBoRepositoryImpl @Inject constructor(
                     it.data.play_urls.map {
                         LinkStreamWithReferer(
                             it.url,
-                             config.referer ?: "https://vebotv.co/"
+                            referer ?: config.referer ?: config.url
                         )
                     }
 

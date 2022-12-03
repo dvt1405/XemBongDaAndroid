@@ -1,6 +1,7 @@
 package com.kt.apps.xembongda.repository.footbalmatch
 
-import android.util.Log
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.kt.apps.xembongda.api.BinhLuan90PhutApi
 import com.kt.apps.xembongda.di.RepositoryModule
 import com.kt.apps.xembongda.model.FootballMatch
@@ -8,6 +9,7 @@ import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
 import com.kt.apps.xembongda.model.FootballTeam
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
 import com.kt.apps.xembongda.model.football.BinhLuanFootballMatchModelItem
+import com.kt.apps.xembongda.repository.FirebaseLoggingUtils
 import com.kt.apps.xembongda.repository.IFootballMatchRepository
 import com.kt.apps.xembongda.repository.config.FootballRepoSourceFrom
 import com.kt.apps.xembongda.repository.config.FootballRepositoryConfig
@@ -23,6 +25,11 @@ class BinhLuan90PhutRepositoryImpl @Inject constructor(
     override fun parseMatchesFromHtml(html: String): Observable<List<FootballMatch>> {
         TODO("Not yet implemented")
     }
+
+    private val url: String?
+        get() = Firebase.remoteConfig
+            .getString(RepositoryModule.BinhLuan90Config)
+
 
     override fun getAllMatches(): Observable<List<FootballMatch>> {
         trustEveryone()
@@ -58,6 +65,13 @@ class BinhLuan90PhutRepositoryImpl @Inject constructor(
                     )
                 }
             }
+            .doOnNext {
+                FirebaseLoggingUtils.logGetAllMatches(FootballRepoSourceFrom.BinhLuan91)
+            }
+            .doOnError {
+                FirebaseLoggingUtils.logGetAllMatchesFail(FootballRepoSourceFrom.BinhLuan91, it)
+            }
+
     }
 
     override fun getLinkLiveStream(match: FootballMatch): Observable<FootballMatchWithStreamLink> {
@@ -73,6 +87,12 @@ class BinhLuan90PhutRepositoryImpl @Inject constructor(
                     }
 
                 )
+            }
+            .doOnNext {
+                FirebaseLoggingUtils.logGetMatchesDetail(match, FootballRepoSourceFrom.BinhLuan91)
+            }
+            .doOnError {
+                FirebaseLoggingUtils.logGetMatchesDetailFail(match, FootballRepoSourceFrom.BinhLuan91, it)
             }
     }
 
