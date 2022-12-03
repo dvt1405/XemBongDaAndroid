@@ -63,10 +63,10 @@ class App : DaggerApplication(), ActivityLifecycleCallbacks {
         mobileAdsConfig.init()
         adsLoaderManager.preloadNativeAds()
         app = this
-        remoteConfig.fetch()
+        remoteConfig.fetchAndActivate()
         remoteConfig.fetch(60 * 1000)
             .addOnSuccessListener {
-
+                remoteConfig.activate()
             }
 //        rewardedAdsManager.preLoadAds()
     }
