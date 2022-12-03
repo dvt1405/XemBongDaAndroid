@@ -63,6 +63,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by evrencoskun on 11/06/2017.
@@ -528,6 +529,54 @@ public class TableView extends FrameLayout implements ITableView {
     @Nullable
     @Override
     public ITableViewListener getTableViewListener() {
+        if (mTableViewListener == null) {
+            mTableViewListener = new ITableViewListener() {
+                @Override
+                public void onCellClicked(@NonNull RecyclerView.ViewHolder cellView, int column, int row) {
+
+                }
+
+                @Override
+                public void onCellDoubleClicked(@NonNull RecyclerView.ViewHolder cellView, int column, int row) {
+
+                }
+
+                @Override
+                public void onCellLongPressed(@NonNull RecyclerView.ViewHolder cellView, int column, int row) {
+
+                }
+
+                @Override
+                public void onColumnHeaderClicked(@NonNull RecyclerView.ViewHolder columnHeaderView, int column) {
+
+                }
+
+                @Override
+                public void onColumnHeaderDoubleClicked(@NonNull RecyclerView.ViewHolder columnHeaderView, int column) {
+
+                }
+
+                @Override
+                public void onColumnHeaderLongPressed(@NonNull RecyclerView.ViewHolder columnHeaderView, int column) {
+
+                }
+
+                @Override
+                public void onRowHeaderClicked(@NonNull RecyclerView.ViewHolder rowHeaderView, int row) {
+
+                }
+
+                @Override
+                public void onRowHeaderDoubleClicked(@NonNull RecyclerView.ViewHolder rowHeaderView, int row) {
+
+                }
+
+                @Override
+                public void onRowHeaderLongPressed(@NonNull RecyclerView.ViewHolder rowHeaderView, int row) {
+
+                }
+            };
+        }
         return mTableViewListener;
     }
 
@@ -744,6 +793,7 @@ public class TableView extends FrameLayout implements ITableView {
         // That means; There is a custom separator color from user.
         if (mSeparatorColor != -1) {
             // Change its color
+            divider.setAlpha((int) (0.07f * 255));
             divider.setColorFilter(mSeparatorColor, PorterDuff.Mode.SRC_ATOP);
         }
 
