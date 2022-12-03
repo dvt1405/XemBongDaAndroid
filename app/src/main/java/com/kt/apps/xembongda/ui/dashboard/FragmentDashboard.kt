@@ -1,10 +1,8 @@
 package com.kt.apps.xembongda.ui.dashboard
 
-import android.animation.Animator.AnimatorListener
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.animation.AnimationUtils
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.kt.apps.xembongda.R
@@ -43,6 +41,15 @@ class FragmentDashboard : BaseFragment<FragmentDashboardBinding>() {
                     it1,
                     true
                 )
+                if (it1 == 1) {
+                    binding.bottomAppbar.performShow()
+                }
+                binding.bottomAppbar.hideOnScroll = it1 != 2
+                firebaseAnalytics.logEvent(
+                    "ChangeBottomNavigation", bundleOf(
+                        "menuId" to it1
+                    )
+                )
             }
             return@setOnItemSelectedListener true
         }
@@ -68,7 +75,6 @@ class FragmentDashboard : BaseFragment<FragmentDashboardBinding>() {
 
     override fun onDetach() {
         super.onDetach()
-        Log.e("TAG", "On detach")
     }
 
     companion object {

@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -17,6 +20,9 @@ abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     abstract val layoutResId: Int
     abstract fun initView(savedInstanceState: Bundle?)
     abstract fun initAction(savedInstanceState: Bundle?)
+    protected val firebaseAnalytics by lazy {
+        Firebase.analytics
+    }
 
     protected var leakView: View? = null
     init {
@@ -43,7 +49,11 @@ abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAction(savedInstanceState)
-
+        firebaseAnalytics.logEvent(
+            "ViewScreen", bundleOf(
+                "name" to binding::class.java.name
+            )
+        )
     }
 
     override fun onStart() {
