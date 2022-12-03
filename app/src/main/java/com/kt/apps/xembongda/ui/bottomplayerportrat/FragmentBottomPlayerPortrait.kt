@@ -127,9 +127,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
     override fun initAction(savedInstanceState: Bundle?) {
         clickToDismissKeyboard()
-        if (savedInstanceState == null) {
-            loadComments()
-        }
+        loadComments()
         registerVideoLink()
         viewModel.totalComment.observe(this) {
             handleTotalComment(it)
@@ -213,6 +211,10 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
             is DataState.Success -> {
                 listLinkSkeleton.hide {
+                    exoPlayerManager.adapterListM3u8Link.onRefresh(dataState.data.linkStreamWithReferer)
+                    exoPlayerManager.adapterListM3u8Link.onItemRecyclerViewCLickListener = { item, position ->
+                        exoPlayerManager.playVideo(listOf(item))
+                    }
                     adapterListM3u8Link.onRefresh(dataState.data.linkStreamWithReferer)
                 }
             }
@@ -227,6 +229,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     private fun sendComment(commentDTO: CommentDTO) {
+
         if (type == Type.LiveStream) {
             viewModel.sendComment(commentDTO, mainViewModel.currentMatch)
         } else {
@@ -333,6 +336,10 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             }
             is DataState.Success -> {
                 listLinkSkeleton.hide {
+                    exoPlayerManager.adapterListM3u8Link.onRefresh(dataState.data.linkStreams)
+                    exoPlayerManager.adapterListM3u8Link.onItemRecyclerViewCLickListener = { item, position ->
+                        exoPlayerManager.playVideo(listOf(item))
+                    }
                     adapterListM3u8Link.onRefresh(dataState.data.linkStreams)
                 }
             }

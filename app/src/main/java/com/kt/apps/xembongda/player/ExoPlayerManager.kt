@@ -10,7 +10,6 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.Drawable
-import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -19,6 +18,7 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.kt.apps.xembongda.App
 import com.kt.apps.xembongda.R
 import com.kt.apps.xembongda.model.LinkStreamWithReferer
+import com.kt.apps.xembongda.ui.bottomplayerportrat.AdapterListM3u8Link
 import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.trustEveryone
 import com.kt.apps.xembongda.utils.visible
@@ -127,6 +128,7 @@ class ExoPlayerManager @Inject constructor(
     var exoPlayer: ExoPlayer? = null
     var isFullScreen: Boolean = false
     var oldScreenFlag: Int? = null
+    val adapterListM3u8Link by lazy { AdapterListM3u8Link(0.3f) }
 
     var playerView: StyledPlayerView? = null
         set(value) {
@@ -303,6 +305,19 @@ class ExoPlayerManager @Inject constructor(
         } else {
             fullScreenButton?.setImageDrawable(exoFullScreenDrawableEnter)
         }
+        val playerControllerView: StyledPlayerControlView =
+            playerView?.findViewById(com.google.android.exoplayer2.ui.R.id.exo_controller) ?: return
+        val recyclerView = playerControllerView.findViewById<RecyclerView>(R.id.recycler_view)
+        if (isFullScreen) {
+            recyclerView.visible()
+            recyclerView.alpha = 1f
+            playerControllerView.show()
+        } else {
+            recyclerView.gone()
+        }
+        if (recyclerView.visibility == View.VISIBLE) {
+            recyclerView.adapter = adapterListM3u8Link
+        }
     }
 
     fun playVideo(data: List<LinkStreamWithReferer>) {
@@ -312,9 +327,10 @@ class ExoPlayerManager @Inject constructor(
         }
         val dfSource: DefaultHttpDataSource.Factory = DefaultHttpDataSource.Factory()
         dfSource.setDefaultRequestProperties(
-            getHeader90pLink(data.first().referer)
+            getHeader90pLink(data.first().referer, data.first())
         )
         dfSource.setKeepPostFor302Redirects(true)
+        dfSource.setAllowCrossProtocolRedirects(true)
         dfSource.setUserAgent(context.getString(R.string.user_agent))
         trustEveryone()
         val adLoader = ImaAdsLoader.Builder(context).setAdPreloadTimeoutMs(3000).build()
@@ -346,7 +362,7 @@ class ExoPlayerManager @Inject constructor(
         exoPlayer?.pause()
     }
 
-    private fun getHeader90pLink(referer: String): Map<String, String> {
+    private fun getHeader90pLink(referer: String, linkStreamWithReferer: LinkStreamWithReferer): Map<String, String> {
         val needHost = referer.contains("auth_key")
         val host = try {
             referer.trim().toHttpUrl().host
@@ -355,6 +371,7 @@ class ExoPlayerManager @Inject constructor(
         }
 
         return mutableMapOf(
+            "Accept" to "*/*",
             "accept-encoding" to "gzip, deflate, br",
             "origin" to referer.getBaseUrl(),
             "referer" to referer.trim(),
@@ -364,6 +381,14 @@ class ExoPlayerManager @Inject constructor(
         ).apply {
             if (needHost) {
                 this["Host"] = host
+            }
+            linkStreamWithReferer.token?.let {
+                this["token"] = it
+                this["Authorization"] = it
+//                this["host"] = host
+            }
+            linkStreamWithReferer.host?.let {
+                this["host"] = host
             }
         }
     }

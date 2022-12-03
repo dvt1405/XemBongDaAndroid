@@ -16,9 +16,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
+        android:id="@+id/btn_link"
         android:layout_height="wrap_content"
+        android:elevation="0dp"
         android:layout_marginHorizontal="@dimen/common_padding_vertical"
-        android:backgroundTint="@color/itemBackgroundColor"
         android:paddingHorizontal="8dp"
         android:text='@{"Link " + position}'
         android:textAllCaps="false"
