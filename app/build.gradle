@@ -21,9 +21,25 @@ android {
         applicationId "com.kt.apps.xembongda"
         minSdk 21
         targetSdk 32
-        versionCode 22112304
+        versionCode 22120301
         versionName "XemBongDa.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions "appLayouts"
+
+    productFlavors {
+        "default" {
+            applicationId "com.kt.apps.xembongda"
+            dimension "appLayouts"
+        }
+
+        "multiColors" {
+            dimension "appLayouts"
+            applicationId "com.bongda.worldcup"
+            applicationIdSuffix ".multiColors"
+            versionNameSuffix "-multiColors"
+        }
     }
 
     buildTypes {

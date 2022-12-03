@@ -72,7 +72,10 @@ ext {
 //            facebook: "com.facebook.android:facebook-android-sdk:[4,5)"
     ]
     ads = [
-            applovin: 'com.applovin:applovin-sdk:+',
-            applovinAdapter: "com.google.ads.mediation:applovin:11.5.5.0"
+            applovin       : 'com.applovin:applovin-sdk:+',
+            appColony      : "com.adcolony:sdk:4.8.0",
+            applovinAdapter: "com.google.ads.mediation:applovin:11.5.5.0",
+            meta           : "com.google.ads.mediation:facebook:6.12.0.0", //facebook
+            adcolony       : "com.google.ads.mediation:adcolony:4.8.0.0"
     ]
 }
