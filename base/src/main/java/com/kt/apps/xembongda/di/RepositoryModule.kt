@@ -31,13 +31,13 @@ import javax.net.ssl.X509TrustManager
 @Module
 class RepositoryModule {
     companion object {
-        private const val SOURCE_91_PHUT = "phut91"
-        private const val SOURCE_XOI_LAC_10_PHUT = "xoilac10"
-        private const val BinhLuan90Config = "binhluan90"
-        private const val VE_BO = "vebo"
-        private const val VE_BO_DETAIL = "vebodtail"
-        private const val SOURCE_MITOM = "mitom"
-        private const val VEBO_REFERER = "vebo_referer"
+        const val SOURCE_91_PHUT = "phut91"
+        const val SOURCE_XOI_LAC_10_PHUT = "xoilac10"
+        const val BinhLuan90Config = "binhluan90"
+        const val VE_BO = "vebo"
+        const val VE_BO_DETAIL = "vebodtail"
+        const val SOURCE_MITOM = "mitom"
+        const val VEBO_REFERER = "vebo_referer"
     }
 
     @Qualifier
@@ -191,6 +191,14 @@ class RepositoryModule {
     @FootballRepositoryMapKey(FootballRepoSourceFrom.BinhLuan91)
     fun provideBinhLuanRepo(
         repoImpl: BinhLuan90PhutRepositoryImpl,
+    ): IFootballMatchRepository = repoImpl
+
+    @Provides
+    @IntoMap
+    @BaseScope
+    @FootballRepositoryMapKey(FootballRepoSourceFrom.VTV)
+    fun provideVTVRepo(
+        repoImpl: VTVBackupRepository,
     ): IFootballMatchRepository = repoImpl
 
     @Provides
