@@ -1,6 +1,7 @@
 package com.kt.apps.xembongda.ads
 
 import android.content.Context
+import android.util.Log
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
@@ -38,7 +39,8 @@ class AdsNativeManager @Inject constructor(context: Context) {
 
 
     private val nativeAdsListener by lazy {
-        object : AdListener() {
+        var retryCount: Int = 5
+        object : AdsListener(Type.NATIVE) {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 isLoading.compareAndSet(false, true)
@@ -63,8 +65,8 @@ class AdsNativeManager @Inject constructor(context: Context) {
     }
 
     private val adUnits by lazy {
-        if(BuildConfig.DEBUG) {
-           "ca-app-pub-3940256099942544/2247696110"
+        if (BuildConfig.DEBUG) {
+            "ca-app-pub-3940256099942544/2247696110"
         } else {
             context.getString(R.string.ad_mod_native_id)
         }
@@ -95,7 +97,7 @@ class AdsNativeManager @Inject constructor(context: Context) {
     }
 
     private var emitter: ObservableEmitter<NativeAd>? = null
-    fun preloadNativeAds() {
+    fun preloadNativeAds(retry: Int = 5) {
         if (addLoader.isLoading) return
         compositeDisposable.add(
             Observable.create {
@@ -107,9 +109,10 @@ class AdsNativeManager @Inject constructor(context: Context) {
                 .subscribeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe({
+                    if (concurrentLinkedQueue.isEmpty()) return@subscribe
                     concurrentLinkedQueue.last()?.onReceiveAds(it)
-                }, {
-
+                }, { t ->
+                    Log.e("TAG", t.message, t)
                 }, {
 
                 })
@@ -134,7 +137,6 @@ class AdsNativeManager @Inject constructor(context: Context) {
             null
         }
     }
-
 
 
     private val concurrentLinkedQueue by lazy {
