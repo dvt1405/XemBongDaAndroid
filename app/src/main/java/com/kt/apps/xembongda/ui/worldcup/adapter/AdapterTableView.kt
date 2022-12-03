@@ -60,14 +60,14 @@ class AdapterTableView() : AbstractTableAdapter<IColumnHeaderModel, IRowHeaderMo
             BaseColumnHeader(it)
         }
         val listRowHeader = footballMatchItem.table.map {
-            BaseRowHeader(it.teamName)
+            BaseRowHeader(it.teamName, it.teamLogo)
         }
         setAllItems(listColumnHeader,listRowHeader,listCellData)
     }
 
     companion object {
         private val columnHeaderList by lazy {
-            listOf("Số trận", "Điểm", "Thắng", "Hòa", "Thua", "Bàn thắng", "Hiệu số")
+            listOf("Số Trận", "Đ", "T", "H", "T", "+/-", "HS")
         }
     }
 

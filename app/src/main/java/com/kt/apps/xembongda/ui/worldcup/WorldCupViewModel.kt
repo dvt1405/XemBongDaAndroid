@@ -76,7 +76,8 @@ class WorldCupViewModel @Inject constructor(
                                     it.totalPlayed.toString(),
                                     it.score.toString(),
                                     it.win.toString(),
-                                    it.team.name
+                                    it.team.name,
+                                    it.team.logo
                                 )
                             }
                         )

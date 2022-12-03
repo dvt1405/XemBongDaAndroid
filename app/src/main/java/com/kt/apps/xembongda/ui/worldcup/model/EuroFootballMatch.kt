@@ -32,8 +32,9 @@ data class FootbalMatchTable(
     val Played: String,
     val Points: String,
     val Wins: String,
-    val teamName: String
+    val teamName: String,
+    val teamLogo: String
 ) : Parcelable {
-    fun toListTableData() = listOf(Played, Points, Wins, Draws, Losts, GoalsA, GoalsF, GoalsD)
+    fun toListTableData() = listOf(Played, Points, Wins, Draws, Losts, "$GoalsA/$GoalsF", GoalsD)
 
 }
