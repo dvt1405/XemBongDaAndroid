@@ -20,7 +20,11 @@ class FragmentListMatchViewModel @Inject constructor(
     val listMatch: LiveData<DataState<List<FootballMatch>>>
         get() = _listMatch
 
-    fun getListFootBallMatch(sourceFrom: FootballRepoSourceFrom) {
+    fun getListFootBallMatch(sourceFrom: FootballRepoSourceFrom, shouldGetNew: Boolean = true) {
+        if (!shouldGetNew && _listMatch.value is DataState.Success) {
+            _listMatch.postValue(_listMatch.value)
+            return
+        }
         _listMatch.postValue(DataState.Loading())
         add(
             interactors.getListFootballMatch(sourceFrom)

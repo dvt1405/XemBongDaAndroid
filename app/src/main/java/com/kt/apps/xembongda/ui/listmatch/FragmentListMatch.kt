@@ -75,9 +75,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
     var retry = 0
 
     override fun initView(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            viewModel.getListFootBallMatch(sourceFrom)
-        }
+        viewModel.getListFootBallMatch(sourceFrom, false)
         skeleton.run()
         binding.recyclerView.addItemDecoration(
             CustomItemDivider(
