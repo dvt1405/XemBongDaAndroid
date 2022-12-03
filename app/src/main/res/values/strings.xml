@@ -8,16 +8,9 @@
     <string name="tab_sub_link_source">Dự phòng</string>
     <string name="tab_default_link_source">Uy tín</string>
     <string name="test">Test</string>
-    <string name="ad_mod_banner_id" translatable="false">ca-app-pub-5503498903920416/4681826590</string>
-    <string name="ad_mod_native_id" translatable="false">ca-app-pub-5503498903920416/4861009747</string>
-    <string name="ad_mod_open_apps_id" translatable="false">ca-app-pub-5503498903920416/3064696437</string>
-    <string name="ad_mod_intertitial_id" translatable="false">ca-app-pub-5503498903920416/3244384160</string>
-    <string name="ad_mod_comment_rewarded" translatable="false">ca-app-pub-5503498903920416/6034161041</string>
-    <string name="ad_mod_skip_ads_for_match" translatable="false">ca-app-pub-5503498903920416/6034161041</string>
-    <string name="ad_unit" translatable="false">ca-app-pub-5503498903920416~8656276375</string>
     <string name="viewer_count_def">1</string>
     <string name="firebase_notification_channel_id_default">12345</string>
-    <string name="user_agent">Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36</string>
+    <string name="user_agent">Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36</string>
     <string name="btn_google_signin">Google sign-in</string>
     <string name="login_success">Đăng nhập thành công</string>
     <string name="login_fail">Đăng nhập thất bại!\nHãy thử lại nhé</string>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ad_mod_banner_id" translatable="false">ca-app-pub-5503498903920416/4681826590</string>
+    <string name="ad_mod_native_id" translatable="false">ca-app-pub-5503498903920416/4861009747</string>
+    <string name="ad_mod_open_apps_id" translatable="false">ca-app-pub-5503498903920416/3064696437</string>
+    <string name="ad_mod_intertitial_id" translatable="false">ca-app-pub-5503498903920416/3244384160</string>
+    <string name="ad_mod_comment_rewarded" translatable="false">ca-app-pub-5503498903920416/6034161041</string>
+    <string name="ad_mod_skip_ads_for_match" translatable="false">ca-app-pub-5503498903920416/6034161041</string>
+    <string name="ad_unit" translatable="false">ca-app-pub-5503498903920416~8656276375</string>
+</resources>
