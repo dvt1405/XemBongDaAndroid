@@ -2,14 +2,12 @@ package com.kt.apps.xembongda.ui.livescore
 
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
-import com.kt.skeleton.dpToPx
 
 class PinItemDecoration(
     private val _recyclerView: RecyclerView,
@@ -44,7 +42,6 @@ class PinItemDecoration(
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        Log.e("TAG", "onDrawOver: $_pinItemHeight")
         val topView = parent.getChildAt(0) ?: return
 
         val topPosition = parent.getChildAdapterPosition(topView)
