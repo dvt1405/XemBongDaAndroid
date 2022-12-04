@@ -10,6 +10,9 @@ class FragmentListMatchTabs : BaseFragment<FragmentListMatchTabsBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_list_match_tabs
 
+    override val screenName: String
+        get() = ""
+
     override fun initView(savedInstanceState: Bundle?) {
         binding.viewPayer.adapter = AdapterFootballListPager(this)
         TabLayoutMediator(binding.tabLayout, binding.viewPayer) { tab, position ->

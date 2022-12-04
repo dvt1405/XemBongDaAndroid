@@ -21,6 +21,9 @@ class FragmentHighlight : BaseFragment<FragmentHighlightBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_highlight
 
+    override val screenName: String
+        get() = "FragmentHighlight"
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 

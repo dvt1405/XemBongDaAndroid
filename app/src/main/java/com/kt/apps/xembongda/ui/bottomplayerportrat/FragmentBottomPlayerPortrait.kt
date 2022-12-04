@@ -95,6 +95,9 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     override val layoutResId: Int
         get() = R.layout.fragment_bottom_player_portrait
 
+    override val screenName: String
+        get() = "FragmentBottomPlayer"
+
     override fun initView(savedInstanceState: Bundle?) {
         binding.recyclerViewUnderPlayer.adapter = adapterListM3u8Link
         binding.recyclerViewUnderPlayer.addItemDecoration(

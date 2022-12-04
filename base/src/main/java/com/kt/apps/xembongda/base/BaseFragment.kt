@@ -18,6 +18,7 @@ import javax.inject.Inject
 abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     lateinit var binding: T
     abstract val layoutResId: Int
+    abstract val screenName: String
     abstract fun initView(savedInstanceState: Bundle?)
     abstract fun initAction(savedInstanceState: Bundle?)
     protected val firebaseAnalytics by lazy {
@@ -49,15 +50,17 @@ abstract class BaseFragment<T : ViewDataBinding> : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAction(savedInstanceState)
-        firebaseAnalytics.logEvent(
-            "ViewScreen", bundleOf(
-                "name" to binding::class.java.name
-            )
-        )
     }
 
     override fun onStart() {
         super.onStart()
+        if (screenName.isNotEmpty()) {
+            firebaseAnalytics.logEvent(
+                "ViewScreen", bundleOf(
+                    "name" to screenName
+                )
+            )
+        }
     }
 
     override fun onResume() {

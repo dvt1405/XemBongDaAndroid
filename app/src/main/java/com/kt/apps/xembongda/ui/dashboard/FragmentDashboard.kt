@@ -16,6 +16,9 @@ class FragmentDashboard : BaseFragment<FragmentDashboardBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_dashboard
 
+    override val screenName: String
+        get() = ""
+
     @Inject
     lateinit var factory: MainViewModelFactory
 

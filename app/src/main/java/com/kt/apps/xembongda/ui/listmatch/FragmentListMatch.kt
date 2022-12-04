@@ -72,6 +72,9 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_list_match
 
+    override val screenName: String
+        get() = "FragmentListMatch"
+
     var retry = 0
 
     override fun initView(savedInstanceState: Bundle?) {

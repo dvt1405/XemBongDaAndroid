@@ -14,4 +14,7 @@ class FragmentComment : BaseFragment<FragmenCommentBinding>() {
 
     override fun initAction(savedInstanceState: Bundle?) {
     }
+
+    override val screenName: String
+        get() = "FragmentComment"
 }

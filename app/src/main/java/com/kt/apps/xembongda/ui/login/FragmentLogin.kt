@@ -19,6 +19,9 @@ class FragmentLogin : BaseFragment<FragmentLoginBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_login
 
+    override val screenName: String
+        get() = "FragmentLogin"
+
     override fun initView(savedInstanceState: Bundle?) {
         binding.viewModel = viewModel
     }

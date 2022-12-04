@@ -35,6 +35,9 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_live_score
 
+    override val screenName: String
+        get() = "FragmentLiveScore"
+
     private val _adapter by lazy {
         AdapterLiveScore()
     }

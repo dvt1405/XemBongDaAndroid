@@ -43,6 +43,10 @@ class FragmentWorldCup : BaseFragment<FragmentWorldcupBinding>() {
     override val layoutResId: Int
         get() = R.layout.fragment_worldcup
 
+    override val screenName: String
+        get() = "FragmentRanking"
+
+
     override fun initView(savedInstanceState: Bundle?) {
         binding.recyclerViewRanking.adapter = adapter
         binding.recyclerViewLeague.adapter = listLeagueRankingAdapter
