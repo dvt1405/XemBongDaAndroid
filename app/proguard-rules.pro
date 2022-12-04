@@ -25,3 +25,11 @@
 -keep class com.kt.apps.xembongda.model.authenticate.** {*; }
 -keep class com.kt.apps.xembongda.model.comments.** {*; }
 -keep class com.kt.apps.xembongda.model.UserDTO {*; }
+-keep class com.noqoush.adfalcon.android.sdk.** {*;}
+-keep class com.google.ads.mediation.adfalcon.** {*;}
+-keep public class com.google.android.gms.ads.** {
+ public *;
+}
+-keep public class com.google.ads.** {
+ public *;
+}

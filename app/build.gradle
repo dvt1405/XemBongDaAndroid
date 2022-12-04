@@ -63,6 +63,7 @@ android {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation appDependencies.values()
     implementation 'com.google.android.gms:play-services-ads:21.3.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -80,7 +81,7 @@ dependencies {
     implementation project(":base")
     implementation project(":skeleton")
     implementation project(":nativetemplates")
-//    implementation project(":dialoglib")
+    implementation project(":adfalcon-sdk-4.1.1")
     implementation project(":tableview")
     implementation googlePlayServices.values()
     implementation exoPlayerDependencies.values()
