@@ -84,3 +84,11 @@ fun String.removeAllSpecialChars(): String {
         .replace("\t", "")
         .trim()
 }
+
+fun String.getBaseUrl(): String {
+    val isUrl = this.contains("http:")
+    val isHttps = this.contains("https:")
+    if (!isUrl) return ""
+    val baseUrl = replace(Regex("(http(s)?:\\/\\/)|(\\/.*)"), "")
+    return if (isHttps) "https://$baseUrl" else "http://$baseUrl"
+}

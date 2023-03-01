@@ -25,6 +25,7 @@ import com.kt.apps.xembongda.model.comments.CommentDTO
 import com.kt.apps.xembongda.model.comments.CommentSpace
 import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.model.highlights.HighLightDetail
+import com.kt.apps.xembongda.model.tv.KenhTvDetail
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.ui.MainViewModel
 import com.kt.apps.xembongda.ui.comment.AdapterComment
@@ -81,7 +82,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     private val type by lazy {
-        when(arguments?.getInt(EXTRA_TYPE)) {
+        when (arguments?.getInt(EXTRA_TYPE)) {
             Type.HighLight.value -> Type.HighLight
             else -> Type.LiveStream
         }
@@ -150,7 +151,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
 
         binding.formComment.btnSend.clicks().throttleFirst(300, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe ({
+            .subscribe({
                 if (loginViewModel.isNeedReLogin) {
                     showLogin()
                     return@subscribe
@@ -207,7 +208,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     private fun handleGetHighLighDetail(dataState: DataState<HighLightDetail>) {
-        when(dataState) {
+        when (dataState) {
             is DataState.Loading -> {
                 listLinkSkeleton.run()
             }
@@ -270,7 +271,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 dialog.dismiss()
                 App.get().rewardedAdsManager.loadAds()
-                    .subscribe ({
+                    .subscribe({
                         activity?.let { it1 ->
                             it.show(it1) {
                                 mainViewModel.increaseComment(it)
@@ -355,6 +356,7 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     companion object {
         private const val EXTRA_TYPE = "extra:type"
         private const val EXTRA_HIGH_LIGHT = "extra:highlight"
+        private const val EXTRA_TV = "extra:tv"
         fun newInstance(type: Type = Type.LiveStream, vararg extra: Any): FragmentBottomPlayerPortrait {
             return FragmentBottomPlayerPortrait().apply {
                 this.arguments = bundleOf().apply {
@@ -363,6 +365,9 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
                         if (it is HighLightDTO) {
                             putParcelable(EXTRA_HIGH_LIGHT, it)
                         }
+                        if (it is KenhTvDetail) {
+                            putParcelable(EXTRA_TV, it)
+                        }
                     }
                 }
             }
@@ -370,6 +375,6 @@ class FragmentBottomPlayerPortrait : BaseFragment<FragmentBottomPlayerPortraitBi
     }
 
     enum class Type(val value: Int) {
-        LiveStream(0), HighLight(1)
+        LiveStream(0), HighLight(1), TV(2)
     }
 }

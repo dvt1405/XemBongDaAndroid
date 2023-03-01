@@ -18,6 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.kt.apps.xembongda.BuildConfig
+import com.kt.apps.xembongda.ads.AdsListener
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -58,11 +59,12 @@ class ApplovinAdsManager @Inject constructor(
         }
     }
 
-    fun createInterstitialAd(activity: Activity, onAdLoaded: () -> Unit) {
+    fun createInterstitialAd(activity: Activity, maxRetry: Int, onAdLoaded: () -> Unit, onFail: () -> Unit = {}) {
         interstitialAds = MaxInterstitialAd("dab8e8a26db51517", sdk!!, activity)
         // Load the first ad
+        var _maxRetry = maxRetry
         interstitialAds?.setListener(
-            object : LogAdEvent(Type.INTERSTITIAL_ADS) {
+            object : AdsListener(Type.INTERSTITIAL, Source.APP_LOVIN) {
                 var retryTimes = 0
                 override fun onAdLoaded(ad: MaxAd?) {
                     super.onAdLoaded(ad)
@@ -72,13 +74,13 @@ class ApplovinAdsManager @Inject constructor(
                 override fun onAdDisplayed(ad: MaxAd?) {
                     super.onAdDisplayed(ad)
                     interstitialAds = null
-                    createInterstitialAd(activity, {})
+                    createInterstitialAd(activity, maxRetry, {})
                 }
 
                 override fun onAdClicked(ad: MaxAd?) {
                     super.onAdClicked(ad)
                     interstitialAds = null
-                    createInterstitialAd(activity, {})
+                    createInterstitialAd(activity, maxRetry,{})
                 }
 
                 override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
@@ -86,35 +88,45 @@ class ApplovinAdsManager @Inject constructor(
                     retryTimes++
                     val delayMillis =
                         TimeUnit.SECONDS.toMillis(2.0.pow(6.0.coerceAtMost(retryTimes.toDouble())).toLong())
-                    Log.e("AppLovinSdk", sdk?.mediationProvider ?: "MAx")
+                    if (_maxRetry < 0) {
+                        Handler(Looper.getMainLooper()).post { onFail() }
+                        return
+                    }
                     Handler(Looper.getMainLooper())
                         .postDelayed(
                             {
                                 interstitialAds?.loadAd()
+                                _maxRetry--
                             }, delayMillis
                         )
                 }
 
                 override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
                     super.onAdDisplayFailed(ad, error)
+                    if (_maxRetry < 0) {
+                        Handler(Looper.getMainLooper()).post { onFail() }
+                        return
+                    }
                     interstitialAds?.loadAd()
+                    _maxRetry--
                 }
             }
         )
         interstitialAds?.loadAd()
     }
 
-    fun requestInterstitialAds(activity: Activity, maxRetry: Int = 5) {
-
+    fun requestInterstitialAds(activity: Activity, maxRetry: Int = 5, onAdShow: () -> Unit, onFail: () -> Unit) {
         getInstance(activity) {
             if (interstitialAds?.isReady == true) {
                 Handler(Looper.getMainLooper()).post {
                     interstitialAds?.showAd()
+                    onAdShow()
                 }
             } else {
-                createInterstitialAd(activity) {
+                createInterstitialAd(activity, maxRetry, onFail) {
                     Handler(Looper.getMainLooper()).post {
                         interstitialAds?.showAd()
+                        onAdShow()
                     }
                 }
             }
@@ -134,75 +146,6 @@ class ApplovinAdsManager @Inject constructor(
             MaxNativeAd.Builder()
 
         )
-    }
-
-    open class LogAdEvent(val type: Type) : MaxAdViewAdListener {
-        private val firebaseLogging: FirebaseAnalytics
-            get() = Firebase.analytics
-
-        override fun onAdLoaded(ad: MaxAd?) {
-            loadedAd(type)
-        }
-
-        override fun onAdDisplayed(ad: MaxAd?) {
-            loadAdDisplayed(type)
-        }
-
-        override fun onAdHidden(ad: MaxAd?) {
-
-        }
-
-        override fun onAdClicked(ad: MaxAd?) {
-            loadAdClicked(type)
-        }
-
-        override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-            loadAdFail(type, error)
-        }
-
-        override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-            displayAdFail(type)
-        }
-
-
-        override fun onAdExpanded(ad: MaxAd?) {
-
-        }
-
-        override fun onAdCollapsed(ad: MaxAd?) {
-
-        }
-
-        private fun loadedAd(type: Type) {
-            firebaseLogging.logEvent(
-                "${type.adsName}_AdLoaded", DEF_BUNDLE_DATA
-            )
-        }
-
-        private fun loadAdDisplayed(type: Type) {
-            firebaseLogging.logEvent(
-                "${type.adsName}_Displayed", DEF_BUNDLE_DATA
-            )
-        }
-
-        private fun loadAdClicked(type: Type) {
-            firebaseLogging.logEvent(
-                "${type.adsName}_Clicked", DEF_BUNDLE_DATA
-            )
-        }
-
-
-        private fun loadAdFail(type: Type, error: MaxError?) {
-            firebaseLogging.logEvent(
-                "${type.adsName}_LoadFail", DEF_BUNDLE_DATA
-            )
-        }
-
-        private fun displayAdFail(type: Type) {
-            firebaseLogging.logEvent(
-                "${type.adsName}_DisplayFail", DEF_BUNDLE_DATA
-            )
-        }
     }
 
     enum class Type(val adsName: String) {

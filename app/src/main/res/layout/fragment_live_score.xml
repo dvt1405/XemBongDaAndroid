@@ -9,6 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="match_parent">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -30,6 +31,7 @@
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/ad_view"
+            android:visibility="gone"
             app:adSize="SMART_BANNER"
             app:adUnitId="@string/ad_mod_banner_id"
             android:layout_width="match_parent"

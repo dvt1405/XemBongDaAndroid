@@ -40,7 +40,7 @@ class FragmentHighlight : BaseFragment<FragmentHighlightBinding>() {
         )[FragmentHighlightViewModel::class.java]
     }
 
-    private val adapterHighLights by lazy { AdapterHighLights() }
+    private val adapterHighLights by lazy { AdapterHighLightsNoAds() }
     private val skeleton by lazy {
         KunSkeleton.bind(binding.recyclerView)
             .adapter(adapterHighLights)
@@ -112,10 +112,10 @@ class FragmentHighlight : BaseFragment<FragmentHighlightBinding>() {
                 binding.swipeRefreshLayout.isEnabled = true
                 if (viewModel.currentPage == 1) {
                     skeleton.hide {
-                        adapterHighLights.onRefresh(dataState.data)
+                        adapterHighLights.onRefresh(dataState.data.filterIsInstance<ItemHighLights.DTO>())
                     }
                 } else {
-                    adapterHighLights.onAdd(dataState.data)
+                    adapterHighLights.onAdd(dataState.data.filterIsInstance<ItemHighLights.DTO>())
                 }
             }
 

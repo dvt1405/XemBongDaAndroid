@@ -33,3 +33,14 @@
 -keep public class com.google.ads.** {
  public *;
 }
+-keep class com.bytedance.sdk.** { *; }
+
+-keep class com.bytedance.sdk.openadsdk.** {*;}
+-keep public interface com.bytedance.sdk.openadsdk.downloadnew.** {*;}
+
+#MSSDK
+-keep class ms.bd.o.Pgl.**{*;}
+-keep class com.bytedance.mobsec.metasec.ov.**{*;}
+
+-keep class com.kt.apps.xembongda.model.tv.** {*;}
+-keepclassmembers class com.google.firebase.database.GenericTypeIndicator { *; }

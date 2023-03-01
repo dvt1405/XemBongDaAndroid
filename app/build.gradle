@@ -1,3 +1,10 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://artifact.bytedance.com/repository/pangle/'
+        }
+    }
+}
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -21,7 +28,7 @@ android {
         applicationId "com.kt.apps.xembongda"
         minSdk 21
         targetSdk 32
-        versionCode 22120301
+        versionCode 22120703
         versionName "XemBongDa.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -81,7 +88,9 @@ dependencies {
     implementation project(":base")
     implementation project(":skeleton")
     implementation project(":nativetemplates")
-    implementation project(":adfalcon-sdk-4.1.1")
+    implementation files("libs/adfalcon-sdk-4.1.1.aar")
+//    implementation files("libs/open_ad_sdk.aar")
+    implementation files("libs/pangle-4.8.0.8.0.aar")
     implementation project(":tableview")
     implementation googlePlayServices.values()
     implementation exoPlayerDependencies.values()
@@ -94,6 +103,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding4:rxbinding-core:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-appcompat:4.0.0'
     implementation 'com.jakewharton.rxbinding4:rxbinding-material:4.0.0'
+    implementation "com.tbuonomo:dotsindicator:4.3"
 
 
 }

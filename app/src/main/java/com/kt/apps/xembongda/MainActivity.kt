@@ -26,8 +26,10 @@ import com.kt.apps.xembongda.base.BaseActivity
 import com.kt.apps.xembongda.databinding.ActivityMainBinding
 import com.kt.apps.xembongda.model.DataState
 import com.kt.apps.xembongda.model.FootballMatchWithStreamLink
+import com.kt.apps.xembongda.model.LinkStreamWithReferer
 import com.kt.apps.xembongda.model.highlights.HighLightDTO
 import com.kt.apps.xembongda.model.highlights.HighLightDetail
+import com.kt.apps.xembongda.model.tv.KenhTvDetail
 import com.kt.apps.xembongda.player.ExoPlayerManager
 import com.kt.apps.xembongda.repository.ILiveScoresRepository
 import com.kt.apps.xembongda.ui.MainViewModel
@@ -35,6 +37,7 @@ import com.kt.apps.xembongda.ui.PlayerActivity
 import com.kt.apps.xembongda.ui.bottomplayerportrat.FragmentBottomPlayerPortrait
 import com.kt.apps.xembongda.ui.dashboard.FragmentDashboard
 import com.kt.apps.xembongda.ui.highlight.FragmentHighlightViewModel
+import com.kt.apps.xembongda.ui.tv.FragmentTVViewModel
 import com.kt.apps.xembongda.utils.gone
 import com.kt.apps.xembongda.utils.visible
 import javax.inject.Inject
@@ -57,6 +60,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val highLightViewModel by lazy {
         ViewModelProvider(this, factory)[FragmentHighlightViewModel::class.java]
+    }
+    private val tvViewModel by lazy {
+        ViewModelProvider(this, factory)[FragmentTVViewModel::class.java]
     }
 
     private val sceneRoot by lazy {
@@ -118,6 +124,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun initAction(savedInstanceState: Bundle?) {
         viewModel.matchDetail.observe(this, handelGetMatchDetail())
         highLightViewModel.highLightDetail.observe(this, handleHighLightDetail())
+        tvViewModel.selectedChannel.observe(this, handleTvChannel())
         viewModel.loadCommentNum()
         exoPlayerManager.onCloseExoPlayer = {
             onBackPressed()
@@ -127,6 +134,25 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
         binding.landScapeLayout.setOnClickListener {
 
+        }
+    }
+
+    private fun handleTvChannel() =  Observer<DataState<List<LinkStreamWithReferer>>> {
+        when(it) {
+            is DataState.Success -> {
+                exoPlayerManager.playVideo(it.data)
+            }
+
+            is DataState.Loading -> {
+                exoPlayerManager.pause()
+                tvViewModel.selectedTV?.let {
+                    go(scene2, transition, it)
+                }
+            }
+
+            else -> {
+
+            }
         }
     }
 
@@ -343,6 +369,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val item = params.filterIsInstance<HighLightDTO>().last()
             FragmentBottomPlayerPortrait.newInstance(
                 FragmentBottomPlayerPortrait.Type.HighLight,
+                item
+            )
+        } else if (params.isNotEmpty() && params.filterIsInstance<KenhTvDetail>().isNotEmpty()) {
+            val item = params.filterIsInstance<KenhTvDetail>().last()
+            FragmentBottomPlayerPortrait.newInstance(
+                FragmentBottomPlayerPortrait.Type.TV,
                 item
             )
         } else {

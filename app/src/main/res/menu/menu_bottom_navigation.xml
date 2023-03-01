@@ -9,7 +9,7 @@
         <item
             android:id="@+id/euro"
             app:showAsAction="ifRoom"
-            android:icon="@drawable/ic_round_sports_basketball_24"
+            android:icon="@drawable/ic_round_live_tv_24"
             android:title="@string/item_menu_euro_title" />
     <!--    <item-->
     <!--        android:id="@+id/copa"-->
@@ -19,7 +19,7 @@
     <item
         android:id="@+id/middle"
         android:enabled="true"
-        android:icon="@drawable/ic_round_live_tv_24"
+        android:icon="@drawable/ic_round_sports_basketball_24"
         android:title="Live"
         app:showAsAction="ifRoom" />
 

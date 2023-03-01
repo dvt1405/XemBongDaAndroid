@@ -63,7 +63,6 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is BaseAdsViewHolder<*> -> {
-                Log.e("ADS", "$position")
 
                 (holder as BaseAdsViewHolder<AD>).onBind()
             }
@@ -72,8 +71,6 @@ abstract class BaseAdsAdapter<T, AD : ViewDataBinding, VB : ViewDataBinding> :
                     if (isOneBanner()) {
                         getItem(position)
                     } else {
-                        Log.e("ADS", "$position - ${_listItem.size} - $itemCount")
-                        Log.e("ADS", "${position - (position / 3) - 1}")
                         _listItem[position - (position / 3) - 1]
                     },
                     if (this::onItemRecyclerViewCLickListener.isInitialized) onItemRecyclerViewCLickListener else null

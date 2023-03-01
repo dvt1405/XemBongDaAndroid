@@ -41,7 +41,7 @@ ext {
             database    : 'com.google.firebase:firebase-database-ktx',
             dynamicLinks: 'com.google.firebase:firebase-dynamic-links-ktx',
             crashlytics : 'com.google.firebase:firebase-crashlytics-ktx',
-            remoteConfig: 'com.google.firebase:firebase-config-ktx',
+            remoteConfig: 'com.google.firebase:firebase-config-ktx:21.0.2',
             messaging   : 'com.google.firebase:firebase-messaging-ktx:23.1.0'
     ]
 
@@ -77,7 +77,5 @@ ext {
             applovinAdapter: "com.google.ads.mediation:applovin:11.5.5.0",
             meta           : "com.google.ads.mediation:facebook:6.12.0.0", //facebook
             adcolony       : "com.google.ads.mediation:adcolony:4.8.0.0",
-            adfalcon       : "com.noqoush.adfalcon.android.sdk:adfalcon-sdk:4.1.1",
-            vungle         : "com.google.ads.mediation:vungle:6.12.0.0"
     ]
 }

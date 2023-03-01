@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:kt="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="tv"
+            type="com.kt.apps.xembongda.model.tv.KenhTvDetail" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/common_padding"
+        android:background="?selectableItemBackground"
+        android:paddingVertical="@dimen/common_padding_vertical">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/tv_icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/app_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/ShapeableImageView.SmallCorner"
+            kt:bindImageUrl="@{tv.logoChannel}" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/common_padding"
+            android:layout_marginTop="@dimen/common_padding_vertical"
+            android:text="@{tv.name}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/test" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

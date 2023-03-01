@@ -30,8 +30,14 @@ class FcmService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         showNotification(message)
-        Log.e("TAG", Gson().toJson(message))
         message.messageType?.let { Log.d(this::class.java.simpleName, it) }
+        Firebase.remoteConfig.fetch()
+            .addOnSuccessListener {
+
+            }
+            .addOnFailureListener {
+
+            }
         if (message.messageType == "RefreshRemoteConfig") {
             Firebase.remoteConfig.fetch()
                 .addOnSuccessListener {

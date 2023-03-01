@@ -1,6 +1,8 @@
 package com.kt.apps.xembongda.ads
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
@@ -32,8 +34,8 @@ class AdsNativeManager @Inject constructor(context: Context) {
     private val nativeOptions by lazy {
         NativeAdOptions.Builder()
             .setReturnUrlsForImageAssets(true)
+            .setRequestMultipleImages(true)
             .setVideoOptions(videoOptions)
-            .setRequestCustomMuteThisAd(true)
             .build()
     }
 
@@ -49,7 +51,9 @@ class AdsNativeManager @Inject constructor(context: Context) {
             override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
                 if (!isLoading.get() && listAds.isEmpty()) {
-                    preloadNativeAds()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preloadNativeAds()
+                    }, 5000)
                 }
             }
         }
@@ -112,7 +116,7 @@ class AdsNativeManager @Inject constructor(context: Context) {
                     if (concurrentLinkedQueue.isEmpty()) return@subscribe
                     concurrentLinkedQueue.last()?.onReceiveAds(it)
                 }, { t ->
-                    Log.e("TAG", t.message, t)
+
                 }, {
 
                 })

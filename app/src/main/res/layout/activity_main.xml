@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="1"
+            android:fitsSystemWindows="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +34,7 @@
 
 
         <FrameLayout
+            android:fitsSystemWindows="true"
             android:id="@+id/land_scape_layout"
             android:layout_width="match_parent"
             android:layout_gravity="center"
@@ -53,6 +55,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:fitsSystemWindows="true"
             android:id="@+id/scene_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

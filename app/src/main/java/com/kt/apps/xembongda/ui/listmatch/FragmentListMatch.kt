@@ -48,9 +48,9 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
 
     private val adapter by lazy {
         if (sourceFrom == FootballRepoSourceFrom.BinhLuan91) {
-            AdapterFootballMatch()
+            AdapterFootballMatchNoAds()
         } else {
-            AdapterFootballMatch()
+            AdapterFootballMatchNoAds()
         }
     }
     private val skeleton by lazy {
@@ -215,7 +215,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
                     range = if (str.length - index > 1000) 1000 else {
                         str.length - index
                     }
-                    Log.e(tag, "${index}")
+                    Log.e(tag, "$index")
                     subStr = str.substring(index, index + range)
                     index+=range
                     Log.e(tag, subStr)
@@ -232,7 +232,7 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
         adapter.onItemRecyclerViewCLickListener = { item, position ->
             adsInterstitialManager.loadAds(requireActivity())
             currentMatch = item
-            adapter.pauseAds()
+//            adapter.pauseAds()
             isLoadingWebView = false
             mainActivityViewModel.getFootballMatchDetail(item)
         }
@@ -269,15 +269,15 @@ class FragmentListMatch : BaseFragment<FragmentListMatchBinding>() {
 
     override fun onDetach() {
         super.onDetach()
-        App.get().adsLoaderManager.unregister(adapter)
-        adapter.clearAds()
+//        App.get().adsLoaderManager.unregister(adapter)
+//        adapter.clearAds()
         binding.recyclerView.adapter = null
     }
 
     override fun onDestroy() {
         retry = 0
-        App.get().adsLoaderManager.unregister(adapter)
-        adapter.clearAds()
+//        App.get().adsLoaderManager.unregister(adapter)
+//        adapter.clearAds()
         super.onDestroy()
     }
 

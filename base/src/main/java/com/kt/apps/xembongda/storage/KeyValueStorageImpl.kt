@@ -71,6 +71,8 @@ class KeyValueStorageImpl @Inject constructor(
 
     override fun <T> getList(key: String, clazz: Class<T>): List<T> {
         val type = TypeToken.getParameterized(List::class.java, clazz).type
-        return Gson().fromJson(sharedPreferences.getString(key, ""), type)
+        val gsonValue = sharedPreferences.getString(key, "")
+        if (gsonValue?.isEmpty() != false) return listOf()
+        return Gson().fromJson(gsonValue, type)
     }
 }

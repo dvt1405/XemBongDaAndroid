@@ -5,10 +5,12 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import com.bytedance.sdk.openadsdk.api.init.PAGSdk
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kt.apps.xembongda.ads.AdsConfigManager
 import com.kt.apps.xembongda.ads.AdsNativeManager
 import com.kt.apps.xembongda.ads.RewardedAdsManager
+import com.kt.apps.xembongda.ads.pangle.PangleAdsManager
 import com.kt.apps.xembongda.di.DaggerAppComponents
 import com.kt.apps.xembongda.di.DaggerBaseComponents
 import com.kt.apps.xembongda.receiver.VolumeChangeReceiver
@@ -35,6 +37,9 @@ class App : DaggerApplication(), ActivityLifecycleCallbacks {
     @Inject
     lateinit var rewardedAdsManager: RewardedAdsManager
 
+    @Inject
+    lateinit var pangleAdsManager: PangleAdsManager
+
 
     private val showAds: Boolean by lazy {
         if (BuildConfig.DEBUG) true
@@ -60,8 +65,13 @@ class App : DaggerApplication(), ActivityLifecycleCallbacks {
 
     override fun onCreate() {
         super.onCreate()
-        mobileAdsConfig.init()
-        adsLoaderManager.preloadNativeAds()
+        if (!PAGSdk.isInitSuccess()) {
+            pangleAdsManager.initSDK {
+            }
+        }
+        mobileAdsConfig.init({
+            adsLoaderManager.preloadNativeAds()
+        })
         app = this
         remoteConfig.fetchAndActivate()
         remoteConfig.fetch(60 * 1000)

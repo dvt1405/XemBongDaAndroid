@@ -32,6 +32,7 @@ interface BaseComponents {
     fun iHighLightRepo(): Map<HighLightConfig.Source, @JvmSuppressWildcards IHighLightRepository>
     fun iLiveScores(): ILiveScoresRepository
     fun iRankingRepo(): IRankingRepository
+    fun iTVRepo(): ITVDataSource
 
 
     @Component.Builder

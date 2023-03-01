@@ -2,6 +2,7 @@ package com.kt.apps.xembongda.ui.worldcup
 
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.kt.apps.xembongda.R
@@ -40,10 +41,15 @@ class AdapterRanking : BaseAdsAdapter<EuroFootballMatchItem, AdViewContainerBind
         }, notifyDataChange)
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+    }
+
     override fun bindAds(adsBinding: AdViewContainerBinding, position: Int) {
         for (view in (adsBinding.root as ViewGroup).children.iterator()) {
             if (view is AdView) {
-                view.loadAd(AdRequest.Builder().build())
+                view.loadAd(AdRequest.Builder()
+                    .build())
                 view.adListener = adsListener
             }
         }

@@ -8,6 +8,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.kt.apps.xembongda.R
+import com.kt.apps.xembongda.ads.AdsConfigManager
 import com.kt.apps.xembongda.ads.AdsListener
 import com.kt.apps.xembongda.ads.applovin.ApplovinAdsManager
 import com.kt.apps.xembongda.base.BaseFragment
@@ -31,6 +32,9 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
 
     @Inject
     lateinit var applovinAdsManager: ApplovinAdsManager
+
+    @Inject
+    lateinit var adsConfigManager: AdsConfigManager
 
     override val layoutResId: Int
         get() = R.layout.fragment_live_score
@@ -71,15 +75,19 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
 
     override fun onStart() {
         super.onStart()
-        try {
-            loadAds()
-        } catch (e: Exception) {
-            Firebase.crashlytics.log(e.message ?: e::class.java.simpleName)
-        }
+//        try {
+//            adsConfigManager.init({
+//                loadAds()
+//            })
+//        } catch (e: Exception) {
+//            Firebase.crashlytics.log(e.message ?: e::class.java.simpleName)
+//        }
     }
-
+    private var timer: Timer? = null
     private fun loadAds() {
-        Timer().schedule(object : TimerTask() {
+        timer?.cancel()
+        timer = Timer()
+        timer?.schedule(object : TimerTask() {
             override fun run() {
                 Handler(Looper.getMainLooper()).post {
                     binding.adView.loadAd(
@@ -88,7 +96,7 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
                     )
                 }
             }
-        }, 0, 3 * 60 * 1000)
+        }, 500, 3 * 60 * 1000)
 
         binding.adView.adListener = object : AdsListener(Type.BANNER) {
             override fun onAdFailedToLoad(p0: LoadAdError) {
@@ -98,7 +106,7 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
                         AdRequest.Builder()
                             .build()
                     )
-                }, 1000)
+                }, 5000)
             }
         }
     }
@@ -135,6 +143,11 @@ class FragmentLiveScore : BaseFragment<FragmentLiveScoreBinding>() {
 
     override fun onDestroyView() {
         disposable.clear()
+        try {
+            timer?.cancel()
+        } catch (_: Exception) {
+
+        }
         super.onDestroyView()
     }
 }

@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapter<T, VB : ViewDataBinding> : RecyclerView.Adapter<BaseViewHolder<T, VB>>() {
     abstract val itemLayoutRes: Int
     open lateinit var onItemRecyclerViewCLickListener: OnItemRecyclerViewCLickListener<T>
-    private val _listItem by lazy { mutableListOf<T>() }
+    protected val _listItem by lazy { mutableListOf<T>() }
     var currentSelectedItem: T? = null
-        get() = field
         set(value) {
             val oldPosition = _listItem.indexOf(field)
             val newPosition = _listItem.indexOf(value)

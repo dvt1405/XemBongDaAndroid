@@ -21,6 +21,8 @@ import com.kt.apps.xembongda.ui.login.DialogFragmentLogin
 import com.kt.apps.xembongda.ui.login.FragmentLogin
 import com.kt.apps.xembongda.ui.login.LoginViewModel
 import com.kt.apps.xembongda.ui.tabs.FragmentListMatchTabs
+import com.kt.apps.xembongda.ui.tv.FragmentTV
+import com.kt.apps.xembongda.ui.tv.FragmentTVViewModel
 import com.kt.apps.xembongda.ui.worldcup.FragmentWorldCup
 import com.kt.apps.xembongda.ui.worldcup.WorldCupViewModel
 import dagger.Binds
@@ -57,6 +59,9 @@ abstract class MainModule {
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun fragmentWorldCup(): FragmentWorldCup
+
+    @ContributesAndroidInjector(modules = [ViewModelModule::class])
+    internal abstract fun fragmentTV(): FragmentTV
 
     @ContributesAndroidInjector(modules = [ViewModelModule::class])
     internal abstract fun mainActivity(): MainActivity
@@ -105,7 +110,12 @@ abstract class MainModule {
     @Binds
     @IntoMap
     @ViewModelKeys(WorldCupViewModel::class)
-    internal abstract fun bindWorldCupViewModel(viewModel: WorldCupViewModel) : ViewModel
+    internal abstract fun bindWorldCupViewModel(viewModel: WorldCupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKeys(FragmentTVViewModel::class)
+    internal abstract fun bindTVViewModel(viewModel: FragmentTVViewModel): ViewModel
 
 
 }

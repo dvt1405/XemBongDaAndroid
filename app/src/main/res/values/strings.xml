@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Xem Bóng Đá</string>
     <string name="item_menu_euro_schedule">Schedule</string>
-    <string name="item_menu_euro_title">WorldCup</string>
+    <string name="item_menu_euro_title">TV</string>
     <string name="item_menu_copa_title">CoppaAmerica</string>
     <string name="item_menu_highlight_title">HighLight</string>
     <string name="item_menu_livescore_title">LiveScore</string>
